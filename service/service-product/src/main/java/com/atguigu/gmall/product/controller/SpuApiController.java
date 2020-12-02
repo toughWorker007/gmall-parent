@@ -30,17 +30,6 @@ public class SpuApiController {
         return Result.ok(spuInfoIPage);
     }
 
-    @GetMapping("list/{pageNum}/{limit}")
-    public Result spuPage2(@PathVariable("pageNum") Long pageNum
-            , @PathVariable("limit") Long limit, Long category3Id){
-        IPage<SpuInfo> page = new Page<>();
-        page.setSize(limit);
-        page.setCurrent(pageNum);
-
-        IPage<SpuInfo> spuInfoIPage = spuService.spuInfoIPage(page, category3Id);
-        return Result.ok(spuInfoIPage);
-    }
-
     @PostMapping("saveSpuInfo")
     public Result saveSpuInfo(@RequestBody SpuInfo spuInfo){
         spuService.saveSpuInfo(spuInfo);
