@@ -1,0 +1,236 @@
+1.mysql->java:bigint->long;varchar->String;
+2.boot5.x时写mysql有cj.Driver和时区问题%2B=+;
+3.boot&cloud搭配时注意查询版本匹配；
+4.tomcat支持500并发；nginx是5万；lvs能对nginx做负载均衡，软件层面负载均衡的极限。
+	tomcat线程池默认初始线程数量可能是10个。
+5.并发：一秒有多少个请求；
+6.MybatisPlus:1.Pojo;2.PojoMapper extends BaseMapper<Pojo>{};
+	3.App+@MapperScan(pojoPath);4.Test+@SpringBootTest;
+7.mysql的bigint类型针对java的long类型；varchar类型对String类型;
+
+
+MabatisPlus:
+1.mp的自动填充创建/修改时间(表字段填充)。
+	1.@TableField;2.implementsMetaObjectHandler{};
+2.mp的主键生成策略；@TableId;
+3.线程安全的操作数据库；1.@Version;2.配置bean;【原理cas(old,new)】;
+4.逻辑删除数据库；@TableLogic;2.配置Bean;
+5.分页查询三步(1.定义一个page;2.mapper给page装数据;3.page.getRecords())。
+	5.1.mapper.selectPage(page,null);
+	5.2.users= page.getRecords();
+6.Wrapper类的泛型是实体类那个pojo的类;
+8.分页查询：
+	1.new Page<Pojo>(pageNum,pageSize);
+	2.service.page(page,new Wrapper().eq());
+	3.page.getRecords();
+9.逆向生成代码不覆盖文件夹;
+10.逆向工程生成的serviceImpl里面附带的有对应的baseMapper;和其他表的baseMapper不重复。
+11.mp的[baseMapper.upload()]参数是一个完整的对象，不是id;
+12.mp的逆向工程生成的serviceImpl和baseMapper的基本方法名不同。
+13.mp逆向工程代码修改路径名的模块名，数据表名。
+
+es6
+1.定义let变量时是局部变量，不同范围即可同名let变量。
+2.const常量声明时必须手动直接赋值;
+3.对象属性简写：属性名与值相同时，只写一个属性值即可；自动以值的变量名为属性名；
+
+nodeJs:
+1.npm对es6不支持，下载babel插件；
+2.命令行安装是加上参数[-g]表示全局安装，电脑本机环境内都生效。
+3.webPack的主文件引入副文件关键字[require];
+4.命令行[npm config set registry https://registry.npm.taobao.org]或
+	者[npm install --registry=https://registry.npm.tabao.org]比命令行[cnpm]风险少。
+5.[npm run dev]跑起了服务器，可以在服务器运行窗口直接ctrl+c停止node服务器。
+6.vue方法调方法时，必须写括号。
+
+vueRouter:
+创建一个分栏影响四个页面：
+	1.[router/index.js]复制一个分栏，标明跳转路径。
+	2.创建跳转的页面[views/teacher/teacher.vue]。
+	3.编写页面js脚本[api/teacher/teacher.js];(非必须)
+	4.编写二级函数脚本(一级函数脚本导入二级函数脚本，
+		二级函数脚本导入request函数脚本);(非必须)
+	(导入格式：import teacher from "@/api/teacher/teacher")
+		("@/" is [src] directory)。
+
+1.最多42亿多(<43亿)个ipv4地址,四个字节最多42亿多(<43亿)个取值;
+2.桥接和NAT:(内网就是局域网)
+	1.桥接：外网可见，内网可见;(vm和host相同外网ip,vm自己有独自的内网ip,ip会随机分配);
+	2.NAT：外网可见，内网不可见;(vm和host相同外网ip,vm无独自的内网ip);
+
+3.百度查IP地址查询结果是外网ip(路由器ip);cmd命令行[ipconfig]是内网ip;
+4.常见内网ip：
+	第一种10.0.0.0～10.255.255255;
+	第二种172.16.0.0～172.31.255.255;
+	第三种192.168.0.0～192.168.255.255;
+	其它的IP你就认为是外网IP好了。（这种解释方法不严谨，但便于初学者理解）
+
+5.js的<script/>标签体内，声明的各个属性不必加逗号;
+6.map有的不可为null:
+	1.hashMap:k/v可null;
+	2.concurrentHashMap:k/v皆不可null;
+	3.treeMap:k不null,v可null;
+	4.HashTable:k/v皆不可null;
+7.[npm init -y]初始化当前文件夹;npm管理当前文件夹里的项目;
+8.环境设置：dev、test、prod;
+9.新版本boot和mysql配置时区和驱动：
+	dataSourceConfig.setUrl("jdbc:mysql://localhost:3306/online_edu?serverTimezone=GMT%2B8");
+	dataSourceConfig.setDriverName("com.mysql.cj.jdbc.Driver");
+10.时间两次变化：
+	db(serverTimezone=GMT%2B8)--->contrller(spring.jackson.time-zone=GMT+8)--->browser;
+11.swagger：1.实现接口文档编写;2.可以告诉我们接口的路径及所需要的参数。
+12.accessors(chain=true);开启链式编程;
+13.java可以以String类型将日期传递到sql语句执行;
+	mysql里的date类型，可以用[>=或者<=]进行比较;
+14.vue模板里config目录下dev.env.js文件改baseUrl;
+	api目录下的login.js是看具体接口路径;
+15.DO(数据表对象),VO(视图对象),DTO(数据传输对象)。pojo是统称。
+16.put是修改，post是添加;
+17.修改了模块名：
+	1.pom.xml文件内的本模块名字改掉;
+	2.依赖此模块的模块的pom.xml文件内依赖的名字改掉;
+	3.父模块的pom.xml文件内注册的名字改掉;
+18.iterator:
+	1.集合：while(iterator.hasNext()){sout(iterator.next())};
+	2.while(result.next()){get()};
+19.事务管理用到了aop;
+20.@ResponseBody可让方法返回的大多对象转为json;不只是String;
+21.Edu的事务处理遇到RuntimeException类型异常事务回滚，遇到Exception类事务不回滚。
+23.方法抛出异常代码之后的，此方法内的之后的代码不执行了。
+24.[baseApi]指的是[protocol://ip:port/projectName];
+25.vue里的router：
+	1.general=>router:{path:componentUrl}。
+	2.primary=>router:{path:templateContent}。
+26.vue模板的使用：
+	1.检查router目录下的index.js文件;
+	2.找到文件指向的页面(是以vue结尾的文件);
+	3.在文件里编写js代码;
+	4.js代码模块化调用api里的js;
+27.easyMock伪造后端数据，前端贴入复制的指定url，请求得到数据。
+28.【vue模板】和【easy-mock】配合实现前后端分离的前端脱离开发;
+	【swaggerJar包】和【java代码】配合实现前后端分离的后端脱离开发;
+29.前端的easyMock设置json数据时，要按照规范，不然就访问不了。
+30.前端决定请求方式;
+31.
+32.六个跨域(corsPolicy)解决,前端项目部署的服务器的url和后端项目部署的服务器url不同。
+	1.protocol:http！=https;
+	2.requestMethod;
+	3.url:url写错了;
+	4.ip/域名：@CrossOrigin;
+	5.port:@CrossOrigin;
+	6.重启电脑，重启nginx试试;
+
+33.http状态码：
+	200：ok;
+	304:useCache;
+	403:无权限;
+	404:noResource;
+	500:服务器内部问题;
+	
+34.饿了么的分页组件里页面调用查询方法时默认有传递括号和参数。
+	实际查询方法的封装查询方法的形参就只是给饿了么的分页组件里调方法看的，
+	其他地方调用封装方法时按无参即可;
+35.main.js已经import了router,可以this.$router.push()跳转页面。
+36.数据回显写在页面的钩子函数created()里了。
+37.路由器跳转：this.$router.push({path:"/teacher/list"});
+	当前路由(网址栏)的参数：this.$route.params.teacherId;这个没有r的已经是具体路由,也包含了很多参数;
+38.修改信息时，带上了时间信息，String->Date导致失败;
+	传参过程中修改，传参是String->pojo;
+	在pojo实体类对应属性添加注解日期时间格式解决;
+39.前端数据为null时，传到java层是undefined;
+40.js代码的if(null)也算是假;
+41.UUID的32位数字里有"-",一般UUID.randomUUID().toString.replaceAll("-","");
+42.vue的@click属性的值，方法名带"()"。又像是不带;
+43.上传到tomccat服务器的文件类型是MultipartFile(springmvc),默认限制1MB(大写);
+44.条件渲染
+		v-if
+			利用内存进行计算 适用于页面经常变化的情况 只使用一次结果
+		v-show 
+			适用于页面不怎么变化 缓存页面数据 性能更高一些
+45.data区，export default{data(){return{k:v}}}
+46.图片上传cropSuccess{}方法，选择图片点击提交后vue底层就会触发提交到已经标明的地址。
+47.nginx开启端口号6868;
+48.Aatrox;
+49.nginx负载均衡：复制location ~ path {proxy_pass protocol+ip+port;}即可;
+	path一般是正则表达式。匹配符合时,里面的地址替换掉nginx的地址;
+50.nginx启动不了，看主目录下的logs目录下的错误原因，看不明白百度。
+51.前端模板：1.router/index.js;2.addPage;3.writeJs;4.api;
+52.oss传图片/视频：
+	1.前端指定属性filed:"multipartFile",后端handler的形参名是(MultipartFile multipartFile);保持一致。
+	2.multipartFile.getOriginName();
+	3.multipartFile.getInputStream();
+	4.upload(bucketName,filename,inStream);
+53.easyExcel的读表格的EventListener是放在Controller层了;
+60.不安全锁cas;
+
+61.java以easyExcel读表时,针对行数据设计一个对象;
+62.java和database交互时,针对行数据设计一个对象;
+63.读easyExcel且将数据放到db,该设计两个对象。
+64.org.springframework.beans.BeanUtils.copyProperties(eduSubject,parentSubjectVO);
+	复制时候，源对象和目标对象同时有的属性才会被复制。
+65.返回二级数据：
+	1.不确定一级/二级对象的出现顺序;
+	2.先处理一级;
+	3.一级放到map,二级根据map查找到一级对象;
+	4.一级对象getList().add(subObject);
+66.向外提供接口的格式：
+	export default{
+		data(){
+			return{}
+		}
+		getAll(){
+			return request({
+				url:'url',
+				method:'get'
+			})
+		}
+	}
+67.前端树形控件(层级目录)：
+	1.注意官网组件的各级展示的属性名;
+68.前端三层：view.vue->script.js->methodsImpl.js;
+69.删除业务一般提供一个“id”;添加业务一般提供完整对象。
+70.throw new EduException();在if-else代码块里可以没有返回值。
+71.mvcRest代码：post:add;put:update;
+72.商品多个分类且各分类可存在一样名字子商品时,
+	判断货物是否仓库已有不可再只看名字。
+73.路径里追加的参数看作了String类型。一般是"id"和"str";
+74.树形控件内的方法operateById(node, data)参数带了结点数据。
+75.弹出文本框之前初始化数据，应该输入的数据皆初始化，防止影响条件判断。
+76.vue方法调方法时，必须写括号。
+77.查询过服务器之后的逻辑写在then(res=>{logicOperate()})方法。
+78.longtext:长文本；不是必须，额外加表存放。
+79.VO给excel等情况使用;
+	传入的数据会影响多张数据库的表时,
+	新建前端pojo接收数据。
+	只影响一张表时,直接数据库表对应的实体类接收即可,无需另new。
+80.前端VO要有id属性，不必有生成时间和更改时间。
+81.elementUI下拉框的<el-option :value="item.id"></el-option>
+	:value的值是<el-select v-model="value">的v-mode的值。可自己指定。
+82.前端展示列表查所有(getAll),一般不传递参数，给url即可。
+83.BASE_URL：页面里不可直接引用BASE_URL,
+	在<script>脚本里再定义一个BASE_URL=process.env.BASE_URL给页面;
+85.前端页面按功能分是两个区域：<html>,<script>,这两个标签里的内容不可跨区写。
+86.js页面引入组件还要再声明组件。
+87.tinymce在day09;八步：
+	a.复制tinymce4.7.5文件夹到前端项目的static文件夹
+    b.当前项目找到vue-admin/build/webpack.dev.conf.js文件
+	c.在当前项目中找到vue-admin/index.html 文件，引入js文件，复制拷贝内容
+		可能会报错 不用理会  拷贝在div的外面
+	d.把Tinymce复制到vue-admin\src\components下
+    e.在form.js中，引入Tinymce组件
+	f.在form.js代码声明使用的这个组件
+	g.使用富文本编辑器(form表单中添加 替换原来的)
+	h.添加样式(form表单中添加)
+88.方法引用一级js的方法，不用箭头函数了，直接写方法体。
+	引了一级js，一级js引二级时，写箭头函数，逻辑业务写在.then()内;
+89.[:fieldName]已经是v-bind单向绑定了,v-model是双向绑定。单向绑定已可实现回显了。
+90.主页面跳转子页面，[path:form/:data]。跳转到form，带着参数。
+91.判断添加还是修改一般看是否有id;
+92.debug:前端结果不理想看两个属性：console,network(headers,response)。
+93.物理外键可导致操作表时出现异常,现在普遍逻辑外键。
+94.new QueryWrapper<pojo>()的泛型时要返回的返回值类型。
+95.section和chapter都有course_id,查课程细节时候传course_id就够了。
+96.<li>是<ul>,<ol>的子标签，迭代列表时候是迭代<li>。
+97.前端自服务器接到的数据和前端对象不相符时，定义变量可后缀objectUI。
+98.mp只对一张表进行crud,多表操作程序员写sql;
+99.内，左，右，左外，右外，全。

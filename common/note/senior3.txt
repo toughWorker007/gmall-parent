@@ -1,0 +1,247 @@
+1.rpm:redhat package manage; -i:安装，-e卸载；-qa(queryall) | grep mysql查看。
+2.数据库开启了查询缓存时，缓存在内存。真实数据和索引树（目录树）在磁盘上。
+3.聚簇索引：数据行在磁盘的排列和索引排序保持一致。一张表只有一个聚簇索引，因为结构和是和一个字段保持一致。
+	n阶b树的一个磁盘块上，n个索引，n+1个地址。
+4.一次io的大小有限制。io以页为基本单位,一次io一页，一个磁盘页最多16kb;
+5.b树，关键字集合分布在整棵树中，即叶子节点和非叶子节点都存放数据(地址)和关键字。
+    b+树只叶子节点保存地址。innodb引擎索引采用b+树。
+6.关联查询优于子查询。
+7.mysql查询使用通配符的"前%"格式时，索引会失效，效率较低。
+8.elasticSearch的全文检索（倒排索引）效率比mysql的模糊查询效率高很多。
+9.myisam引擎，不支持外键，行锁和事务，不支持聚簇索引，缓存区只缓存索引。
+10.鱼骨图靠前的操作，靠前多刷掉数据，不然大量数据多次io。
+11.索引(一种提高查找效率的排好序的数据结构)：每张表可有多个索引(innodb里说的b+树就是索引树)，为了加快表里数据的查找。
+12.实际上索引也是一张表，也占空间。
+13.索引有时内存达到g单位，InnoDB在把磁盘数据读入到内存时会以页（Page）为基本单位（一次I/O操作）。
+每一个磁盘块在MySQL中是一个页，页大小是固定的，MySQL InnoDB的默认的页大小是16KB，
+每个索引会分配在页上的数量是由索引字段的大小决定。当索引字段值的长度越长，每一页上的数量就会越少，
+因此在一定数据量的情况下，索引的深度会越深，影响索引的查找效率。
+14.聚簇索引：mysql数据库设定主键后数据库会自动建立索引，innodb为聚簇索引。
+15.
+16.mysql数据库存放到300w左右数据时查询效率降低开始考虑分库分表。
+17.主键自带非空唯一。但是不自带自增，人为设置。
+18.explain sqlStatement；type值从最好到最坏依次是：system>const>eq_ref>ref>range>index>ALL;最少到range，到ref即可。
+	0.system:explain SELECT * from proxies_priv WHERE `User`='root';
+	1.const用于primary key或者unique索引，组合索引达不到。
+	2.eq_ref:唯一性索引扫描，对于每个索引键，表中只有一条记录与之匹配。常见主键或唯一索引扫描。
+	3.ref:非唯一性索引扫描，返回匹配某个单独值的所有行。
+	4.range:只检索给定范围的行,使用一个索引来选择行。
+	以下全扫是没条件从句。
+	5.index(全扫索引):explain select id from t1;
+	6.all(全扫数据):explain select * from t1;
+19.leftJoin:保左；innerJoin舍弃仅单表有值。
+21.key_len的长度计算公式：int=4；utf8=3,latin=1,gbk=2,null+1,var+1；组合索引时查看。
+实际使用的key_len和索引总的len占比越高越好。
+22.rows:rows列显示MySQL认为它执行查询时必须检查的行数。值越小越好。
+23.一个表可多个索引，一个索引一棵树。
+24.一个sql语句只能用一棵树。
+25.groupBy分组时默认自带升序排序，先排序(asc)后分组。
+26.1.关联查询join..on..;2.复合索引create..on..;
+27.开发、测试、生产环境。
+28.逻辑架构：
+	1.连接层：线程池，验证连接权限；
+	2.服务层：查询缓存，sql优化，执行部分内置函数，判断是否可利用索引；11:fojwghsol;(fwgs);
+	3.引擎层：
+	4.存储层：将数据存放在裸机的文件系统；和存储引擎层交互；
+29.平衡树的时间复杂度为logN.仅次于hash;因范围和排序，取平衡树。bTree和b+Tree可为多阶。
+30.节点：mysql对磁盘一次io的内存大小是一个磁盘页(16kb),一个磁盘页就是一个节点。
+	1.bTree(3属性):一个节点里有索引键值，有真实对应的一条数据的地址，还有下个节点的地址；
+	2.b+tree:一个节点里有索引键值，下个节点的地址；
+31.sql_mod:
+32.union:自动去重；union all:不带自动去重。
+33.重要的explain优化分析：
+	1[id(大到小，上到下)；
+	2[type(上文第18条)(eq_ref-ref-range);
+	3[key_len(组合索引时，判断该索引有多少部分被使用到，非常重要。值越大越好）;
+	4[rows列显示MySQL认为它执行查询时必须检查的行数。值越小越好;
+	5[Extra重要的杂项：
+		1.usingFilesort:排序没用到索引；
+		2.UsingTemporary：分组没用索引。产生临时表。分组操作是需要先排序后分组的。
+		3.UsingIndex：覆盖索引，没同时出现usingWhere：索引只读取(select)数据而非查找。
+		4.usingWhere:o表明使用了where过滤 条件使用了索引！
+		5.using join buffer：表明关联字段没有使用索引！
+34.复合索引：
+	1.全值匹配。（MySQL中有查询优化器explain，所以sql语句中字段的顺序不需要和联合索
+		引定义的字段顺序相同，查询优化器会判断纠正这条SQL语句以什么样的顺序执行效率高，
+		最后才能生成真正的执行计划，所以不论以何种顺序都可使用到联合索引。）
+	2.不全时：最左连续(只个别索引时，key_len较小)。复合索引时索引列出现要按顺序，
+		但中间可以插入其他无关的非索引列。
+35.索引失效：	
+	1.函数(WHERE LEFT(emp.name,3) = 'abc');
+	2.计算和函数导致索引失效。
+	3.范围条件(dep_id>20)右边的列索引失效：范围条件往后放。
+	4.!=或者<>;
+	5.is not null;但是is null可以。
+	6.like以%作为开始；
+	7.类型转换(name=23,数字转字符串)导致索引失效。
+36.索引优化：优先筛选力度大的索引(fwgs)。组合时也尽量此类索引靠前面。组合索引时尽量多列，range is later。
+37.关联查询优于子查询（不知道细节）：
+	1.left/right时，手动将指定小数据量表为驱动表。驱动表遍历数据；
+	2.inner join时，mysql自动指定小数据表为驱动表。
+38.排序优化(orderBy)(filesort逆序限)：
+	1.逆方向，不索引；一个asc，一个desc。
+	2.顺序错，不索引；where(where不存在时,以order为准)以后所有出现的列。
+	3.无限制，不索引；limit 10。
+	总结：【范围条件】和【group by 或者 order by】的字段出现二选一时，优先观察条件字段的过滤数量，
+	如果过滤的数据足够多，而需要排序的数据并不多时，可考虑filesort优先把索引放在范围字段上。
+39.filesort：双路排序：内存第一次读行指针和排序列并进行排序，第二次读列其他列。单：一读所有列。
+	1.增大sort_buffer_size参数的设置。此参数针对每个进程(connection)的  1M-8M之间调整
+	2.增大max_length_for_sort_data参数的设置。返回的列的总长度大于max_length_for_sort_data，
+	    使用双路算法，否则使用单路算法。1024-8192字节之间。
+	3.减少select 后面的查询的字段。
+40.Order by时select * 是一个大忌(*决定filesort时单双路实际占的内存空间)。
+	1.group by 先排序再分组；
+	2.group by没有过滤条件，也可以用上索引；
+	3.当无法使用索引列，增大max_length_for_sort_data和sort_buffer_size参数的设置；
+41.mysql登陆时，-p,-u,-P,-h时，-P后面加空格了，-h也加。不加时两个都不加。
+42.慢查询日志：SHOW VARIABLES LIKE '%slow_query_log%'; set global slow_query_log=1; 只对窗口生效，重启服务失效；
+43.mysql更改服务器设置的3个级别：（
+	1.session(可省略)，
+	2.global：本次服务器运行期间有效，重启失效。
+	3.改conf文件：每次运行都生效。）；
+44.mysqldumpslow -as(t)tg;
+45.slave会从master读取binlog来进行数据同步;slave将master的binary log Events拷
+    贝到它的中继日志(relay log)。slave重做中继日志中的事件，将改变应用到自己的数据库中。
+    MySQL复制是异步的且串行化的，而且重启后从接入点开始复制。复制有延时。
+46.命令	s->stop slave停止IO线程和SQL线程的操作;
+	s->reset slave删除relayLog;
+	m->reset master删除binLog;
+47.主库为从库授权时一般应该指定固定ip，不太好写'%'。
+48.主从(vim /etc/my.cnf)：
+	m:
+	1.给主库设置server_id=num;log_bin=master_log;
+	2.新建一个授all+grant权的用户供从机使用；
+	s:
+	1.配置server_id(大于1);stop slave;
+	2.change master to..host,user,pwd,logFile;
+	3.start slave;
+	4.日志不太对时重启从机服务器试试。
+
+
+mycat(server.xml->schema.xml->rule.xml):
+	1.mysql数据分片->垂直拆分(表太多时挑选几张表尽量按类分到其他库)；
+		+水平拆分(一张表的数据拆分多份放到其他库)；
+	2.拦截sql,一系列顺序分析：分片、路由、读写分离、缓存。
+	3.如果Mycat崩溃了，内存中的序列都没了，
+	Mycat启动后会向数据库申请新的号段，原有号段会弃用。也就是说如果Mycat重启，
+    那么损失是当前的号段没用完的号码，但是不会因此出现主键重复。
+	4.grant all privileges on *.* to 'slave'@'192.168.10.103' identified by 'slave' with grant option;
+		1.grant all privileges on *.* to .. with grant option;
+	5.schema:纲要(这里指逻辑库)；schema.xml用来定义逻辑库和逻辑表。
+		配置隔离时，mysql用库配置隔离，oracle用用户配置隔离。
+	6.dataNode配置：哪张逻辑表，及对应的物理表所在的物理库。
+	7.分库时同类表分到一个库，不同库的表不能关联查询；
+	8.垂直：多张表放到多个服务器；水平：一张表放到多个服务器；
+	9.mycat的id生成策略：
+		1.本地文件：b.主机宕机不可恢复；
+		2.时间戳(雪花算法)：a.简单；b.id过长(18位)；
+		3.数据库方式。{1.new全局序列表 in real db；2.new函数 in mycat;3.change the confFile of mycat;
+			change mycat_server.xml用来定义逻辑库和逻辑表。(0本地1时间戳2db)};mycat到配置文件指定的物理库的
+			全局序列表里预加载一部分号段，放到内存里(mycat宕机后，内存里的序列号丢失，重新加载时会跳过)。
+		4.代码层自主生成全局序列(redis):b.项目代码增加redis,变复杂；
+
+
+
+elasticSearch:
+1.es的经典设计是分词库，输入的关键词与存放的数据都会被分词。查数据时先去分词库query，
+    匹配到分词，得到数据的id标识。然后根据数据的id标识，到存放数据的地方fetch。这种操作方式就是倒排索引。
+2.版本细节：5.x一个index多个type,6.x一个index一个type，7.x：无type。
+   db(index)-table(type)-row(document)-field(field);
+3.es一个索引默认被分为五个分片，每个分片至少有一个备份分片。备份分片必须放在不同服务器里。
+    备份分片只为了高可用，一般不会分担压力。es没搭建集群却指定备份时，备份存放当前服务器，搭建了再分开放。
+4.put+url时，可以在请求体加上jsonStr：
+	{"settings":{分片。。}，"mappings":{"typeName":{"properties":{"fieldName":{fieldDetails}*n}}}}。
+5.自动生成id看着比较乱，一般都手动生成id;
+6.dateType:yyyy-MM-dd;
+7.两种修改方式：put(id是否存在)：创建,或者覆盖式修改(属性个数可能变了)；post（_search;_update）查询,修改(只改指定属性)；
+
+
+jvm:
+	1.green:loader,gc,engine；（Bootstrap(cpp,null)、Extension(%JRE_HOME/lib/ext 目录下的jar和class等)、app loader）；
+	2.yellow:metaspace,heap(0.8e,0.1s,0.1s,2o),memory(直接内存：避免了在Java堆和Native堆中来回复制数据，直接内存IO读写的性能要优于普通的堆内存);
+	3.blue:stack(局部变量, 动态链接, 方法出口等),pc。
+		3.1.栈由一个一个栈帧组成, 栈帧中的结构又由局部变量表, 操作数栈, 帧数据区组成.
+			1.局部变量表 : 保存函数参数,局部变量(当前函数有效,函数执行结束它销毁)
+			2.操作数栈 : 存中间运算结果, 临时存储空间
+			3.帧数据区 : 保存访问常量池指针, 异常处理表;
+
+4.java->class文件->os汇编->0101;
+
+5.基本垃圾回收算法有四种(2,3:清压) : 
+	1.引用计数法(对象头中引用计数变化为0时即刻发生，回收时不移动对象，内存碎片), 
+	2.标记清除法(堆中的有效内存空间被耗尽时，两次遍历。效率低且暂停应用且内存碎片), 
+	3.标记压缩法(将可达的对象压缩到内存的一端，然后清理边界以外的对象。比二多了一步移动，效率低),
+	4.复制算法(e,s0,s1。浪费一般内存，垃圾多(新生区)效率高，垃圾少(old区)，效率低);
+	5.分代算法：（new:复制；old:标记压缩）；
+	6.分区算法：为了控制GC产生的停顿时间；一个区分为多个；
+6.参数指令：-Xmsxn;
+
+juc
+1.版本检查：
+	1.1.projectStucture设置module里改source的level选项，这个是语法格式规范版本；
+	1.2.settings里改javaCompiler指定编译的规范。
+2.把进程作为分配资源的基本单位，而把线程作为独立运行和独立调度的基本单位
+3.mybatis开启缓存这有三个决定元素。
+4.不能跨线程抛异常。
+5.wait/sleep:
+	5.1.wait：放开手里的锁;sleep：握着锁睡，醒了手里还有锁；
+	5.2.wait是Object的方法，sleep是thread的方法
+6.Lock(fair,personal):
+7.可重入锁ReentrantLock(递归锁)，线程内可向下传递锁。解决一个死锁。
+	7.1采取constructor(true)变为公平递归锁；
+7.2定时锁new Lock().tryLock(num);
+
+8.ReentrantLock和synchronized皆是独占可重入(一时刻只有一个线程能够获取锁,线程内可向下传递)锁。
+但是lock可调取tryLock()定时失效解决一部分死锁，sync不可。
+9.ReentrantReadWriteLock可重入读写锁；
+10.线程间通信：1.判断-2.干活-3.通知；
+11.虚假唤醒(if-while)：消费者被唤醒后是从wait()方法（被阻塞的地方）后面执行，而不是重新从同步块开头。
+12.lock.newCondition().await/signalAll();
+13.Variable used in lambda expression should be final;(lamda表达式用到的变量应是final的);
+14.juc的辅助类(CountDownLatch(锁门);CyclicBarrier(组队通关);Semaphore(停车场))：
+    14.1.1.new CountDownLatch(int count) //实例化一个倒计数器，count指定初始计数
+    14.1.2.countDown() // 每调用一次，计数减一
+    14.1.3await() //等待，当计数减到0时，阻塞线程（可以是一个，也可以是多个）并行执行；
+
+    14.2.1.CyclicBarrier(int parties, Runnable barrierAction) 创建一个CyclicBarrier实例，
+    	parties指定参与相互等待的线程数，barrierAction一个可选的Runnable命令，
+	该命令只在每个屏障点运行一次，可以在执行后续业务之前共享状态。
+	该操作由最后一个进入屏障点的线程执行。
+    14.2.2.await() 该方法被调用时表示当前线程已经到达屏障点，当前线程阻塞进入休眠状态，
+        直到所有线程都到达屏障点，当前线程才会被唤醒。
+
+    14.3.1.public Semaphore(int permits) // 构造方法，permits指资源数目（信号量）
+    14.3.2.public void acquire() throws InterruptedException // 占用资源，当一个线程调用acquire操作时，
+        它要么通过成功获取信号量（信号量减1），要么一直等下去，直到有线程释放信号量，或超时。
+    14.3.3.public void release() // （释放）实际上会将信号量的值加1，然后唤醒等待的线程。
+15.volatile：A线程改变主内存变量值之后，B线程后续执行中，
+    是到主内存重新获取最新的变量值。volatile只修饰变量，
+    修饰的变量不会被各个核加载到cpu的缓存区。在主内存。
+    Volatile 关键词只能保证可见性、不能保证有序性，无原子性(多线程读到相同值，改到另一个相同值)。
+16.Runnable不能声明抛出检查型异常。
+17.Callable:异步调用。通常用它解决耗时任务，挂起堵塞问题。
+    17.0.new Thread(new FutureTask<>(()->"Lucy")).start();
+    17.1.为了防止主线程阻塞，建议get方法放到最后;System.out.println(task.get());
+    17.2.只计算一次，FutureTask会复用之前计算过得结果。不想复用之前的计算结果时再创建一个FutureTask对象。
+    17.3.判断计算完成：task.isDone();
+18.泛型的尖括号一直报错，先写上后面的参数列表试试；
+19.JMM规定了内存主要划分为主内存和工作内存；
+20.内存模型三大特性：原子性，有序性，可见性。
+    20.1.a++类似非原子操作都会存在线程安全问题，
+        需要使用同步技术（sychronized）或者锁（Lock）来让它变成一个原子操作。
+    20.2.在 Java 中 volatile、synchronized 和 final 实现可见性。volatile不保证原子性。
+    20.3.volatile和synchronized可以保证程序的有序性。
+21.cas:CompareAndSwap;CAS是解决多线程并发安全问题的一种乐观锁算法;
+    Unsafe类是CAS的核心类，提供硬件级别的原子操作（目前所有CPU基本都支持硬件级别的CAS操作）。
+    cas缺点：开销大，aba,不保证代码块原子性；
+22.AQS：AbstractQueuedSynchronizer；
+    22.1.AQS维护了一个volatile的state和一个FIFO（first-in-first-out）线程等待队列；
+    22.2.juc下面Lock的实现以及一些并发工具类（Semaphore、CountDownLatch、CyclicBarrier等）就是
+        通过AQS来实现的。具体用法是通过继承AQS实现其模板方法，然后将子类作为同步组件的内部类。
+    22.3.AQS将大部分的同步逻辑均已经实现好，
+        继承的自定义同步器只需要实现state的获取(acquire)和释放(release);
+        22.3.1.[tryAcquire(int)：独占方式。
+        22.3.2.[tryRelease(int)：独占方式。
+        22.3.3.[tryAcquireShared(int)：共享方式。
+        22.3.4.[tryReleaseShared(int)：共享方式。
+        22.3.5.[isHeldExclusively()：

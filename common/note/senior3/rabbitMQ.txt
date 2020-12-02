@@ -1,0 +1,161 @@
+1.Channel作为轻量级的Connection极大减少了操作系统建立TCP connection的开销。
+2.Broker：接收和分发消息的应用，RabbitMQ Server就是Message Broker。
+3.virtualHost:每个用户在自己的 vhost 创建 exchange／queue。
+			一个vh相当于mysql服务器多个数据库中的一个数据库。
+
+
+4.	p->conn->vh->conn->consu;
+	producer->channel->exchange->queue->channel->consumer;
+
+5.producer:
+	(频道创建队列->频道发布给交换机，发送方的channel有关属性：(q,x,r))。
+	1.new ConnectionFactory().newConnection().createChannel();
+	2.channel.queueDeclare(queName,durable,exclusive,autoDelete,args);
+		1.exclusive:独个消费。
+		2.args(死信队列)。
+	3.channel.basicPublish(xchange,rout,props,body);
+		1.exc:是""时默认交换机。
+		2.rout:可以是[""],不想指定routKey时一般采用队列名当作路由key。
+		3.props:持久化, 消息TTL。
+
+6.consumer:
+	(频道消费队列)(consumer和中间件的相关属性：Q)。
+	1.new ConnectionFactory().newConnection().createChannel();
+	2.channel.basicConsume(queName,autoAck,deliverCallback,cancelCallback);
+		1.callBack:消费者运行期间所需队列被删除
+		2.deliverCallback消费时回调;
+7.[try(newChannel,newConnection)]创建的链接和频道自动关闭。
+8.多次创建一个queue时，已经存在了就不创建了。
+9.消费者运行期间队列被删了，调用callback;
+10.队列不存在时，启动消费者时包异常。
+11.多个消费者消费一个队列，默认轮巡方式消费。
+12.消息删除：
+	producer收到消费者ack后将队列里的消息删除。
+	不应答时下次启动消费者再次拿到消息。
+13.msg外面包的有信封，信封有[分发tag]。
+14.基本拒绝签收可以将消息requeue,
+	requeue相当于再发布了一条消息，消费者当作新发布的msg。
+	不requeue时，放到死信队列或丢弃。queue不再保存。
+15.消费者开启自动应答时，消息发出后就当收到了应答，msg自动删除。
+16.consumer1消费msg时掉线(仍在处理msg,未应答时)
+	，msg将requeue，然后发给consumer2。
+17.queue存储在内存内，持久化未开启时rabbitServer 
+	 shutdown时queue丢失,消息也丢失。
+	持久化：
+		1.queue持久化。(queue未启动持久化时，msg启动也没效果)。
+		2.msg持久化。
+18.持久化的queue不可再改为非持久化，可以删了再创一个。
+19.编程语言创建队列是在rabbitSrever服务器创建了。
+	发布和消费是针对rabbitServer的队列。
+20.手动应答是为了在接收方控制消息不丢失。
+	queue持久化时为了在发送方控制消息不丢失。
+21.消息无丢失需要发布确认机制。
+22.channel.basicQos(Integer);设置频道预取值(未改变轮巡本质，多的转给别的worker)。
+23.发布确认机制：channel.confirmSelect();
+	rabbitServer的交换机收到msg后返回给发送方一条confirmMsg(附带消息id,自1开始);
+25.workQueue:多个worker共同完成任务。
+26.消费者自动应答：
+	1.增加预取将提高向消费者传递消息的速度。但占用消费者大量ram;
+	2.预取值为1是最保守的。当然这将使吞吐量变得很低。(网络延迟更致命)。
+27.异步发送确认：
+	1.发给两个地方：
+		1.queue;
+		2.缓存map(int(1),msg);
+	2.异步返确认消息给map：
+		1.ackCallback();map删除确认收到的。
+		2.nackCallback();自map取出未收到的msg放到queue，reSend;
+		3.实现：
+			1.channel.addConfirmListener();
+			2.new ConfirmCallback(sequenceNum,multiple);
+				if(multiple),序列号之前的一起被处理。
+
+28.交换机：
+	1.无名交换机。
+	2.direct,topic,headers,fanout;
+		1.direct:发给指定key;
+		2.topic:[*]是一个单词，[#]表示[>=0]个单词，单词间以[.]分割。
+		3.xxx
+		4.fanout:相当于发给全部key(包括[""])的direct方式;
+29.交换机没绑定队列时，交换机接到消息直接丢弃。
+30.channel.queueBind();
+	channel.queueDeclare();
+	channel.exchangeDeclare();
+31.交换机绑定Q：channel.queueBind();是在消费方写的。
+	绑定时写上routKey;
+32.临时队列：消费者断开(停一下程序就没了)连接后就自动删除了。
+33.channel.宣称Q;存在时绑定，不存在时创造并绑定。
+34.消息不丢失：发布确认+ 手动应答。
+35.死信：
+	1.消息TTL过期。
+	2.队列达到最大长度。
+	3.消息被拒绝。
+36.死信由 队列通过 死信交换机排到 死信队列。
+37.发布者指定消息存活时间：AMQP.BasicProperties properties 
+	= new AMQP.BasicProperties().builder().expiration("10000").build();
+38.死信队列和死信交换机等属性比正常队列先声明。
+39.死信队列：普通队列添加属性(DLX,DLK)。
+40.consumer有channel,producer也有channel;
+41.满队收到msg时，最老的msg让出位置，到死信队列。
+	因为队列先进先出。
+43.手动应答拒绝签收时：如果设置了不可返队，丢弃或转到死信队列。
+44.死信队列具体步骤：
+	1.发布方位消息指定过期属性。
+	2.接收方为队列绑定死信交换机，且指明routKey。
+45.消息TTL过期时并不会在队列就被丢弃了，是消费者拿到时进行判断并丢弃或处理。
+46.TTL：
+	1.消息TTL;消费者判定过期及进行处理。
+	2.队列TTL;队列判断过期及进行处理。
+47.rabbitMq的配置类：
+	(死信交换机绑定了死信队列时就功能完备了)。
+	1.X;
+	2.queue;(DL_args);
+	3.bind;
+
+	4.DLX;
+	5.DLQ;
+	6.DL_bind;
+50.
+51.ttl：time to live;存活时间。
+52.rabbitMq的结构：
+	(给消息添加属性时一个messagePostProcessor)
+	1.交换机挂着队列
+	2.消费者连接队列
+	3.生产者连接交换机
+	4.创建队列时给队列添加属性(DL,TTL)。
+		在参数列表的属性位置放一个map;
+	5.发送方给消息添加属性(TTL)。
+		在AMQP.BasicProperties properties 
+			= new AMQP.BasicProperties().builder().priority(5).build();
+
+	6.交换机添加属性(需安装插件)。
+		设置备份交换机，设置消息确认，设置消息回退。
+
+53.不存在消费者时，当消息TTL长的先到队列时，
+	阻塞后面的队列都到不了死信队列知道长ttl过期。
+54.发布确认：安装插件实现延时交换机。
+	1.交换机收到msg放到一个分布式表mnesia内。到时间了再投递。
+55.非延时交换机接到消息立刻发给队列或丢弃。
+56.消息发布确认机制：
+	1.channel.confirmSelect();
+	2.channel.addConfirmListener(ackCallback,nackCallback);
+57.boot发布确认机制：
+	1.配置开启发布确认
+	2.restTemplate.setConfirmCallback(myCallback);
+	3.查原因：restTemplate.setReturnCallback(myCallback);
+58.备份交换机：交换机收到没路由的消息，可以交给备份交换机。
+	备份交换机发给两个队列：
+		1.报警队列
+		2.备份队列
+59.correlationData:消息可设置correlationData保存一个消息id。
+60.存在备份交换机时，交换机设置的消息回退失效。
+61.死信交换机是针对队列存在，交换机用不了。备份交换机是针对交换机存在。
+62.幂等性：多次点击和一次点击的结果相同。
+63.redis.setnx();已存在时不保存。
+64.交换机看不到队列内容，可拿到消息标识。
+65.优先级队列：
+	1.未设置优先级的消息默认优先级是0。
+	2.最大是255，但是官网推荐1-10。否则耗费cpu;
+	3.优先级队列里未被消费的消息排队，大数字比先进的还先出。
+66.惰性队列：消息不发到队列，直接发到磁盘。
+67.大量消息自内存换页至磁盘时更耗费事件和性能。
+	换页时队列阻塞，停止接收消息。

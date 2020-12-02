@@ -1,0 +1,345 @@
+1.myBatis的StringTypeHandler封装了ResultSet的getString/Boolean/Byte/BigDecimal()等,
+	和preparedStatement.setString/Boolean/Byte/BigDecimal()等;
+	有Boolean/Byte/BigDecimal/Float/Integer/Clob/DateTypeHandler等。
+2.类型处理器主要就是用来设置sql语句中的占位符的参数值,及获取查询结果集中的值.
+
+3.jdbc_ResultSet:
+	executeUpdate()返回int,是影响数据库表的行数。
+	executeQuery()会返回一个ResultSet;
+
+	while(resultSet.next()){sout(resultSet.getInt/Byte/String())}
+	db接口sun公司原生设计，比较精简。一个next()方法做三步：判断，下移，返回。
+
+	resultSet有一个属性是rowData,里面就是查到的数据(每个字符的二进制)。
+
+4.debug:
+	蓝箭头stepInto,
+	蓝折箭头stepOver,越过方法体。
+
+5.常见异常：运行，超时，挂掉。
+6.servlet生命周期：
+	servlet生命周期由servlet container管理
+		1.container启动时/首次访问时构造servlet，且进行初始化。
+		2.container运行时接受请求,(早期)每个请求分配一个servlet,调用service();
+		3.container关闭时调用servlet的destroy()销毁。
+	Servlet3.1之后有了异步非阻塞的支持。
+			webFlux：
+				是非阻塞异步框架。核心是基于Reactor的相关API实现。
+7.postMan底层是命令行curl请求。
+8.seprator:
+	1.pom.xml的文件目录以右倒斜线做分割。（xml都右倒）。
+	2.application.properties的目录分隔符也是向右倒。
+9.linux解压tar:[tar -zxvf name.tar.gz]。
+10.vim文件：set nu显示行号。
+11.linux指定配置启动：
+	redis启动时指定配置文件。
+	nginx启动时指定配置文件。
+12.nginx改配置的两个关键字：
+	1.location;
+	2.upstream;
+13.ps -ef |grep nacos。看进程。
+
+jvm(stack + methodArea + stack*2 + pc):
+0.多线程共有：两个(heap+methodArea);
+	各线程私有：两个(stack+pc);
+1.javaCode编译变class文件，class文件是java执行引擎认识的语言。
+	执行引擎执行。
+2.双亲委派：
+	jvm启动时会将jdk的rt路径下的类加载(不知道是不是全部)。
+	往上找，缓存区有没有，没有的话能加载不？不能就向下递。
+3.classLoder(bootstrap + extends + app + self);
+4.沙箱安全机制：
+	是在双亲委派机制的基础上扩展出的内容。保护原生jdk代码。
+	往上找，缓存区有没有，没有的话能加载不？不能就向下递。
+5.native是cpp或者c代码。
+6.本地方法栈：一块负责登记native方法的区域。java通过native方法加强了功能。
+7.pc寄存器：指针，指向执行下一条指令的地址。线程私有。
+	pc寄存器区域不会被gc回收。
+8.方法区：
+	静态变量+常量+类信息。所有线程共享。
+9.程序：数据结构加算法。
+10.虚拟机栈：
+	pc+本地方法栈+栈帧。
+	8种基本类型 + 引用 + 实例方法(百度对象方法和实例方法的定义)。
+11.类执行过程：class+ classLoaderSystem+ runtimeDataArea+ excutionEngine;
+12.堆(非常重要)
+		新生代:老年代=1:2
+		新生代=eden:from:to=8:1:1
+		eden:创建对象
+
+13.gc:
+	minorGc:eden;
+	fullGc(majorGc):old;
+
+	JVM的垃圾回收器将对伊甸园区进行垃圾回收(Minor GC)，将伊甸园区中的不再被其他对象所引用的对象进行销毁。然后将伊甸园中的剩余对象移动到幸存 0区。若幸存 0区也满了，再对该区进行垃圾回收，然后移动到1区。那如果1区也满了呢？再次垃圾回收，满足一定条件后(年龄增长)再移动到养老区。若养老区也满了，那么这个时候将产生MajorGC(FullGC)，进行养老区的内存清理。若养老区执行了Full GC之后发现依然无法进行对象的保存，就会产生OOM异常“OutOfMemoryError”。
+
+	
+
+
+14.调优：
+	初始堆大小(-Xms)配置等于最大堆大小(-Xmx)，提高性能。
+
+15.new->old:
+	大对象(不配置时：大于new区小于old区的对象,大于old区oom);
+	超过指定的次数(默认是15)。
+
+16.方法区溢出：
+	运行时产生了大量的类。
+
+
+
+boot:
+	boot的@Value("${}")注解可以读取yml文件数据给成员变量赋值。
+		(是spring.beans.factory包)
+cloud：
+	cloud使用组件时：
+		1.新建
+		2.激活 bootApp+@EnableXxx
+	切换环境：
+		spring.profiles.active: dev/prod/test。
+	yaml文件":"后面都要空格，或许换行也要空格后再换。
+
+	
+	0.五大神兽：
+		服务发现：eureka[nacos];
+		服务调用：ribbon[loadbalancer];
+		服务调用：feign[openfeign];
+		断路器：Hystrix[sentinel];
+		网关：Zuul[Gateway];
+		分布式配置：Config[nacos];
+	spring为了实现远程调用有一个RestTemplate类，这个类和五
+		大神兽无关。都能调用。
+		第二个属性是json序列化和反序列化。
+		restTemplate.getForObject(url,Object.class);
+		RestTemplate+@LoadBalanced:
+			RestTemplate配和ribbon实现lb。
+	服务发现：
+		1.eureka(cap_ap):
+			自我保护:
+			cap(一致,高可用,分区):只存在2/3。
+			此时本不该踢除，其他有的注册中心踢除了。所以eureka体现了健壮性。
+			可在yml配置属性关闭掉自我保护。
+
+			客户端可能不用注册在eureka;
+			集群：
+				eureka.client.service-url.defaultZone: serviceUrl/eureka。
+		2.zookeeper服务发现:
+			临时节点(cp)。
+			四类节点：(有序)临时(-e),(有序)永久。
+		3.consul(cp):
+		4.nacos(ap<=>cp):
+			nacos(ap/cp)=eureka(ap)+config+bus;
+			nameConfigService;
+			服务注册和配置中心。
+			需要安装。
+			使用：
+				1.bootApp+@EnableDiscoveryClient;
+				2.yml:[spring.application.name:serviceName];
+			lb:
+				默认集成了ribbon:
+					所以默认开启了lb。
+			nacos的cp:注册实例之前必须先注册服务，不然报错。
+			ap和cp切换是发送一个put请求。命令有截图。
+	nacos(8848):
+		nacos(ap/cp)=eureka(ap)+config+bus;
+		nacos做配置中心时：
+			Controller+@RefreshScope动态刷新。
+			yml配置文件名是bootstrp.yml,项目初始化要在到配置中心拉取数据之后。
+			bootstrap.yml+application.yml一起决定哪个配置文件。
+				nacos配置中心的dataId=appName+dev+yaml;
+			配置中心的yaml文件不支持yml文件。
+			nacos配置持久化的mysql版本5.6.5以上。
+
+			集群：
+				修改nacos的startup.sh脚本使支持[-p]参数。
+				架构图：
+					request->nginx(s)->nacos(es)->mysql(s);
+	负载均衡：
+		对比：
+			ribbon：客户端负载均衡(进程内LB);
+			nginx:服务端负载均衡(集中式LB);
+		ribbon：
+			默认负载均衡_轮询.
+			起初配合RestTemplate调用。controller层自动注入一个restTemplate;
+			现在配合OpenFeign实现服务调用和负载均衡。
+			ribbon以@Bean组件方式更改负载均衡算法时，组件放在bootApp扫面不到的位置。
+				然后bootApp加上@RibbonClient注解额，并赋值[MyRule.class]。
+	服务调用：
+		位置：nginx之后。
+			[request->nginx->nacos->mysql];
+		对比：
+			ribbon+template：
+				一个服务被多处调用时，多个微服务都要封装。
+				controller调用了第三方类RestTemplate;
+			openFeign：
+				controller(也可能是serviceImpl)像是在调用自己服务器的服务接口。
+				替换掉了ribbon+template;
+		OpenFeign:
+			定义接口，绑定服务，声明式。集成了ribbon;
+			一般用在客户端，调用服务。
+				在Controller或ServiceImpl里@Autowired注入ServiceFeign即可。
+			注意：
+				调用方的ServiceFeign接口内方法的@RequestMapping()的value应
+					该是服务提供方的Controller类和handler的@RequestMapping()value加在一起的值。
+
+			（feign没有配置yml文件）
+			1.bootApp+@EnableFeignClients;
+			2.调用方新建接口+@FeignClient(serviceInstance.key),
+				接口的方法复制controller内的handler方法,带上注解一起复制。
+			3.调用方的ServiceImpl(也可能是Controller)自动注入(@Resource)新建的接口。
+				handler的@RequestMapping和feign接口的@RequestMapping一般不一样。
+
+			超时控制：
+				openFeign-ribbon,openFeign的调用方默认等待一秒钟。
+				解决:yml文件配置：
+					（不对）ribbon.ReadTimeout: 5000;
+					（不对）ribbon.ConnectTimeout: 5000;
+			自提供日志：
+				调用方yml文件配置：
+					loggong.level.feignServiceName: full。
+
+	断路器：
+		长链路微服务调用，有服务单元故障之后，通过断路器的故障监控向调用方返回一个预期的，
+			可处理的备选响应。而不是一直等或者抛出一个无法处理的异常。
+			这样就保证了服务调用方的调用线程不会长时间被占用，避免故障蔓延。
+		hystrix:
+			降级(fallback):返回备选响应。
+				四类触发降级：
+					异常(3/0)，超时(timeOut)，服务熔断，线程池/信号量打满。
+					常见：运行时，超时，挂掉。
+				降级方案：
+					在服务提供方写降级方法。
+					服务调用方也可写降级方法。[一般是写在客户端]。筷子夹肉，夹豆角。
+				使用：
+					服务端：
+						在可能异常(什么异常都行，导致方法不可用就行)的方法上加注解@HystrixCommand(fallbakMethod="MyFallBackHandler"
+						,commandProperties={@HystrixProperty(name="...",value="")})
+
+						MyFallBackHandler是自己写的降级方法。在当前类内部，参数列表与针对方法的参数列表相同。
+						降级方法返回一个调用方可处理的回应。
+					客户端：
+						bootApp+@EnableHystrix;
+						yml文件feign.hystrix.enable: true;
+
+						在可能异常(什么异常都行，导致方法不可用就行)的方法上加注解@HystrixCommand	(fallback="..")			MyFallBackHandler是自己写的降级方法。在当前类内部，参数列表与针对方法的参数列表相同。
+						降级方法返回一个调用方可处理的回应。
+					全局降级方法：
+						当前Controller类上+ @DefaultProperties("fallbackMethodName"),
+						需回滚的方法上加上@HystrixCommand;
+
+
+					解耦(可能推荐)：
+						yml文件feign.hystrix.enable: true;
+						实现operFeign接口，复写方法为降级策略。
+						调用方的feign接口上的@FeignClient()新加fallback="Xxx.class"的值。
+						比全局和单个都优先触发，出发后后面带就不触发了。
+				熔断(break)：
+					请求不再调用主逻辑，直接调fallbackMethodName();
+					降级->熔断->恢复链路。
+						异常降级，大量降级次数。
+						降级率超过注解里指定的属性值，熔断。一段时间尝试恢复。
+					访问量最大，拒绝访问，触发降级。
+					状态：
+						closed(无存在感),open(熔断),halfOpen(允许一个请求);
+					使用：
+						@HystrixCommand(加@HystrixProperty(name="..",value=".."))
+						步骤截图放在了文件夹里。
+				限流(flowlimit)：
+				秒杀，高并发。限制一秒钟n个。
+			【监控：接近实时的监控。】
+
+	服务网关：
+		zuul.1.x:
+			是基于servlet的阻塞式处理模型。
+			springMvc是实现了一个处理所有请求的DispatcherServlet,由该servlet阻塞时处理请求。
+		gateway:
+			Servlet3.1之后有了异步非阻塞的支持。
+			webFlux：
+				是非阻塞异步框架。核心是基于Reactor的相关API实现。
+				有一个返回类型Mono类似ModelAndView。
+			以filter链的方式提供统一的路由方式提供网关基本功能：安全，监控，限流。
+				功能：反向代理，鉴权，限流，熔断，日志监控。
+			位置：
+				一般是nginx和service之间。
+			服务：
+				路由(route),断言(predicate),过滤器(filter);
+				断言：
+					开发人员可以匹配http请求中所有内容(例:请求头，请求参数),
+					如果请求与断言相匹配则进行路由。
+
+			核心逻辑：路由转发+执行过滤。
+			使用：
+				1.yml文件配置：(基本)spring.cloud.gateway.routes.[-id:,uri: protocol+ip+port,predicates:]
+					(动态路由):spring.cloud.gateway.discovery.locator.enabled: true。
+						加上：spring.cloud.gateway.routes.[-id:,uri: lb://instanceJey,predicates:]
+
+					[也可写编码，较麻烦，不推荐]
+				2.直接访问网关，网关根据断言进行路由(将protocol+ip+port换掉,后面的url保留)。
+				地址栏是网关的url,业务是实际业务。
+
+				打印具体时间和地区：ZoneDateTime.now();
+				断言：
+					1.审核访问时间，
+					2.url关键字，
+					3.是否带cookie,带什么cookie;
+					4.是否带requestHeader,带什么requestHeader;
+					5.请求方式：get,post等。
+					6.带请求参数，指定什么类型;
+				过滤器：
+					gatewayFilter在请求被路由前后对请求进行修改。
+						"pre":参数校验，权限校验，流量监控，日志输出，协议转换,添加令牌等
+						"post":响应内容，响应头的修改，流量监控，日志输出。
+					配置：
+						yml文件：
+							spring.cloud.gateway.routes.filters: ..;
+					编码：
+						自定义过滤器：
+							实现globalFilter,ordered(数字越小越优先);
+								实现类的方法里：exchange.getRequest/response()进行过滤或修改。
+	seata:
+		角色：TM+TC+RM
+			1.TC：可以看作安装的服务器。
+			2.TM：加@GlobalTransaction的方法(一般是ServiceImpl类的方法)。
+			3.RM：分支事务。
+		步骤：
+			1.tm向tc申请开启全局事务，开启时产出一个XID；
+			2.XID在上下文传播
+			3.rm向tc注册分支事务
+			4.tm向tc发起决议
+			5.tc调度全部分支事务提交或回滚。
+
+		seata的事务模式：
+			1.AT模式(默认)
+			2.TCC模式(可混合AT模式，灵活)
+			3.SAGA模式(长事务时较高效)
+			4.XA模式(在开发)
+
+			1.AT模式：
+				1.前提：
+					1.支持本地ACID事务的关系型数据库。
+					2.使用jdbc技术访问数据库
+				2.整体机制(两阶段提交)：
+					1.业务数据和回滚日志记录在同一个本地事务中提交，释放本地锁和连接资源。
+					2.提交或回滚：
+						1.提交：异步迅速提交。
+						2.回滚：通过一阶段的回滚日志及逆行反向补偿。
+							(回滚时校验脏写，发生脏写时转人工处理)。
+
+
+1.Thread.state:
+		new,runable,blocked,waiting,timedWaiting,terminated;
+
+2.redis:redis穿透；键淘汰策略。
+3.linux安装：
+	1.打开镜像，
+	2.安装时第一个提示点[done],
+	3.net设置为开。
+4.全局id：
+	1.reids的incr/incrBy：加组件。(有网址笔记)
+	2.uuid:大内存，无序不可读。
+	3.雪花算法相关，mp的添加时，不必设置id,默认是雪花算法产出id;
+	4.zookeeper生成唯一ID：多步调用api,步骤麻烦且效果不理想。
+	5.mycat本地文件。：怕mycat服务器挂掉。
+	6.数据库方式：有课件，要复制mysql函数。
+
+

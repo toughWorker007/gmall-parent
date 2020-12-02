@@ -1,0 +1,176 @@
+1.mysql->java:bigint->long;varchar->String;
+2.boot5.x时写mysql有cj.Driver和时区问题%2B=+;
+3.boot&cloud搭配时注意查询版本匹配；
+4.tomcat支持500并发；nginx是5万；lvs能对nginx做负载均衡，软件层面负载均衡的极限。
+	tomcat线程池默认初始线程数量可能是10个。
+5.并发：一秒有多少个请求；
+6.MybatisPlus:1.Pojo;2.PojoMapper extends BaseMapper<Pojo>{};
+	3.App+@MapperScan(pojoPath);4.Test+@SpringBootTest;
+7.mysql的bigint类型针对java的long类型；varchar类型对String类型;
+
+
+MabatisPlus:
+1.mp的自动填充创建/修改时间(表字段填充)。
+	1.@TableField;2.implementsMetaObjectHandler{};
+2.mp的主键生成策略；@TableId;
+3.线程安全的操作数据库；1.@Version;2.配置bean;【原理cas(old,new)】;
+4.逻辑删除数据库；@TableLogic;2.配置Bean;
+5.分页查询三步(1.定义一个page;2.mapper给page装数据;3.page.getRecords())。
+	5.1.mapper.selectPage(page,null);
+	5.2.users= page.getRecords();
+6.Wrapper类的泛型是实体类那个pojo的类;
+8.分页查询：
+	1.new Page<Pojo>(pageNum,pageSize);
+	2.service.page(page,new Wrapper().eq());
+	3.page.getRecords();
+9.逆向生成代码不覆盖文件夹;
+10.逆向工程生成的serviceImpl里面附带的有对应的baseMapper;和其他表的baseMapper不重复。
+11.mp的[baseMapper.upload()]参数是一个完整的对象，不是id;
+12.mp的逆向工程生成的serviceImpl和baseMapper的基本方法名不同。
+13.mp逆向工程代码修改路径名的模块名，数据表名。
+14.分页查找：
+	查出来的页数据的七个属性：
+		1.teacherPage.getRecords();
+		2.teacherPage.hasPrevious();
+		3.teacherPage.hasNext();
+		4.teacherPage.getCurrent();
+		5.teacherPage.getPages();
+		6.teacherPage.getTotal();
+		7.teacherPage.getSize();
+15.是否以主键为查找条件：
+	是的话无需wrapper;
+	不是的话new QueryWrapper<Pojo>("columnName",value);
+
+es6
+1.定义let变量时是局部变量，不同范围即可同名let变量。
+2.const常量声明时必须手动直接赋值;
+3.对象属性简写：属性名与值相同时，只写一个属性值即可；自动以值的变量名为属性名；
+
+nodeJs:
+0.[npm install]在网上找个阿里云镜像先设置一下就快了。
+0.1.导入前端页面后先[npm install]下载插件。
+
+1.npm对es6不支持，下载babel插件；
+2.命令行安装是加上参数[-g]表示全局安装，电脑本机环境内都生效。
+3.webPack的主文件引入副文件关键字[require];
+4.命令行[npm config set registry https://registry.npm.taobao.org]或
+	者[npm install --registry=https://registry.npm.tabao.org]比命令行[cnpm]风险少。
+5.[npm run dev]跑起了服务器，可以在服务器运行窗口直接ctrl+c停止node服务器。
+6.vue方法调方法时，必须写括号。
+
+vueRouter:
+创建一个分栏影响四个页面：
+	1.[router/index.js]复制一个分栏，标明跳转路径。
+	2.创建跳转的页面[views/teacher/teacher.vue]。
+	3.编写页面js脚本[api/teacher/teacher.js];(非必须)
+	4.编写二级函数脚本(非必须);
+
+	(一级js导入二级js,二级js导入util目录的request.js);
+
+	(导入格式：import teacher from "@/api/teacher/teacher")
+		("@/"是src目录，但在nuxt里是初目录了。)。
+
+1.<script>放到<head>标签里，比<body>优先加载。先显示了数据。
+	也可放<body>里，据期待加载顺序决定。
+	echart的数据js放到了<body>标签里。
+2.echarts图标，<body>里面的option对象是表格显示方式及数据。
+3.后端递前端数据的两个个格式：
+	1."{k:v}";"{k:[{k:v},{k:v}..]}";
+	2.[{k:v},{k:v}..];
+4.echarts图标要求一个数轴的数据放到一个列表里。
+	所以后端返回应该返回两个列表(xdataList,yDataList)。
+	考虑到json只有两个传递类型且设计的通用VO的属性已设计为map;
+		1.返回一个只有一个entry的map：{k,map[k:v,k:v]};
+		2.返回一个有多个entry的map：{{k:v},{k:v}..};
+5.onlineEdu的后端传递前端的数据只使用了json的"{k:v}"传递方式实现了所有功能。
+6.安装包上传到服务器传到[/usr/local]目录下。
+7.redis前台运行时[ctrl+c]即可退出。
+8.redis的文本文件：
+	1.[/dae]:查找"dae";
+9.esc的端口号防火墙默认关闭，但是限制安全组。
+	破解：[1/65535,0.0.0.0/0]。
+10.linux命令：
+	1.查看进程：[ps -ef | grep redis];
+	2.启动进程：[./redis-server]
+11.Docker是一个开源的应用容器引擎。
+	引擎->镜像->实例：
+		docker是个引擎，拉取镜像，镜像生产容器实例。
+12.docker:镜像是创建容器的软件 , 容器是由镜像运行产生的运行实例。
+13.yum安装jdk不必配置环境变量了：
+	[yum install -y java-1.8.0-openjdk*]。
+14.nuxt的模板：
+	1.layout/default.vue;导航栏。
+	2.pages/index.vue;页面详情。
+15.数据渲染(condition：npm install axios)：
+	1.服务器端渲染：
+		asyncData({param}){return axios.get().then({return{}})}。
+			第二个[return]的内容看作是vue的data区。
+	2.前端渲染：
+		created(){}。
+16.前端可判断list的长度：
+	v-if="courseList.length===0";
+17.动态回显的属性名前面加上":",代表v-bind;
+18.mybatis自写sql传的参数是自定义对象时，
+	mapper层参数加注解@Param("pojoName");
+19.微信登录：
+	1.点击图标:
+		appId+ redirectUrl=>qrCode;
+	2.扫码自动触发：
+		1.appId+ appSecret+ code=>token+ openId;//code是返来的code;
+		2.token+ openId=userInfo;
+
+20.微信支付：
+	1.user点击"现在支付";
+	2.app产出orderNum;
+
+	3.app索要code;
+	4.app将code变qrCode;
+	5.user扫描付款;
+
+	6.微信返回给双方交易信息。
+21.微信支付时app的任务：
+	1.generate orderNum;
+	2.reveal qrCode;
+		1.索要交易链接
+		2.链接变qrCode;
+
+		1.返回一个code;
+
+22.@CrossOrigin是加给Controller才对。
+	因为是controller的mapping和路径有关系。
+
+23.微信用户的唯一标识是openId;
+25.设计订单表时设计了一个包含完整数据的表，虽然和其他字段
+	有重复字段，但是操作简单。
+
+26.订单详情包括：
+	1.service微服务的课程信息
+	2.user微服务的用户信息。
+
+27.向微信支付api传递价钱时值传递了数据，
+	微信支付api的价钱单位是分。书本是0.01元时乘以100发过去，
+
+28.创建微信订单：
+	1.复制url
+	2.以appId和orderNum访问复制的url拿到qrCodeUrl;
+
+	3.user扫二维码之后和微信服务器交流了(此处和登录不同，
+		登录是扫了之后触发app的redirect方法)。
+	4.微信返回支付状态。
+
+29.微信支付：
+	1.[以appId和orderNum和商户Id]访问复制的url拿到qrCodeUrl;//填充到qrCode的base图。
+30.判断支付：
+	2.[以appId和orderNum和商户Id]访问复制的
+		另一个url拿到微信服务器的transactionId和tradeState;
+31.支付之后：
+	1.存储支付记录(可放值订单多次提交)，
+	2.更改订单状态。
+
+32.微信扫码支付：
+	1.访问url拿到qrCodeUrl;
+	2.查询支付状态：
+		1.前端定时任务查询。
+		2.标明回调。
+
+33.前端的if()判断，值是null,undifined应该也是错了。

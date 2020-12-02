@@ -1,0 +1,42 @@
+0.1. 批处理时在druid.properties文件的url属性后缀"?rewriteBatchedStatements=true"批处理才会生效
+1. mysql里任何数值与null操作都是null;select (num +ifnull(field_name,0)) from account;
+2. mysql里日期可以比较，格式要规范；
+3. 对分组结果再次过滤having；
+3.1. 同一条语句顺序group by->having->order by;
+5. 分页查询limit ((n-1)*m, m);
+6. select * from a, b;a12字段，b3字段->产出36字段；
+7. 多表查询，先以where后面条件进行两表拼接，当作一表查出；（个人理解）
+8. 自连接：一张表起两个别名当作两张表看作；
+9. 蠕虫赋值：create table a like b;(复制了表结构)；插数据：insert into a (*) select (*) from b(a:大量死循环赋值))
+10. primary默认唯一且不为空；
+11. unique 不加not null 时，可以有多个null;
+12. 外键在从表（一般在字段多的表中）；逻辑关系分析，主表比从表先存在；外键可能不建议用not null;
+13. mysql对字段内容限定时不支持关键字check,可enum勉强代替；
+14. auto_increament如果手动给了值，值已存在时报错。未存在时，下次添加由所给值+1开始增长。
+15. 数据库瓶颈在 连接过程 查询较快，连接却不能很多，扛不住高并发；（redis）帮忙；
+16. 加索引给经常查的字段就行；alter table tname add index t_index (name); 
+17. 复杂语句：先把不直接存在的条件变成一个临时表，然后把临时表和其他表作为资源再查找。
+18. create-drop(database,table);add-drop(index);alter/modify;(update,delete,);
+19. 模糊查询: select `id`,`last_name`,`sex` from t_user where last_name like concat('%',#{name},'%');
+21. delete from users where id in (?);此类批量操作不能通过占位符方式赋值，只能字符串拼接(where id in ("+str+"))。
+21.5. prepareStatement.setString("..")时会自动加单引号。传过去的字符串没有双引号。因此有两个sql语句无法通过占位符赋值，
+	1. 批量删除和批量修改(where id in (?))。
+	2. where name like '%?%';(可以where name like concat('%',?,'%'));
+22. insert into users values (null,aMo,19),(null,aM,19);批量操作。
+23. （可能不对）4幻读针对行(row)，1读未提交(脏读) and 2读已提交(不可重复读)针对字段(field)；8效率过低。
+23.1. mysql默认100并发；
+25. db的bigint对java的Long;varchar对应String;
+26. char255,varchar65535;
+27、分页查询：
+    1、sql:select * from books limit (PageNum-1)* size, size;
+    2、pageHelper(在serviceImpl里处理，加入这两行，sql语句就当没这事就行了，pageHelper会辅助拼接语句):
+        1、PageHelper.startPage(currentPage,pageSize);
+        2、Page<TravelItem> page = travelItemDao.findAll(queryString);
+    3、Jpa:findAll(new PageRequest(0,10));(Pageable Pageable = new PageRequest(0, 10));
+28.jdbc的五步：
+	1.加载JDBC驱动程序；Class.forName("com.mysql.jdbc.Driver");
+	2.建立连接；DriverManager.getConnection("jdbc:mysql://localhost:3306/数据库名称","用户名称","密码");
+	3.发送SQL语句(对数据库发出请求)；conn.prepareStatement(sql);
+	4.返回查询结果；ps.executeQuery();
+	5.获得结果：while(rs.next()) {sout(rs.getInt("id"))}
+	6.关闭链接。rs.close();ps.close();conn.close();

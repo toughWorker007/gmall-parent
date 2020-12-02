@@ -1,0 +1,18 @@
+ctrl+o：查看父类方法，决定复写哪个。
+ctrl+t;入类
+ctrl+shift+t;查找类
+alt+insert;插入代码块
+ctrl+shift+f;调整选中代码的格式
+alt+shift+z;包裹代码块
+ctrl+shift+x/y;大/小写
+ctrl+h；查看当前类继承体系；
+ctrl+o;重写父类方法；
+ctrl+f12;查看类大纲/结构；
+
+
+
+
+
+
+Systemctl disable firewalld。
+System.currentTimeMillis();

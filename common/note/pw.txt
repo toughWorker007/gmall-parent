@@ -1,0 +1,15 @@
+resource:snakee*2;
+nacos:nacos*2;
+rabbitMq:guest*2;
+dubboAdmin:root*2;
+linuxcentos64:itcast;
+centos06>root:atguigu;
+centos7>root:123456;
+mic>839522338@qq.com:baiSnake.;
+easyMock>snakee*2;
+ali>whitesnakee:snake65;
+	ak:LTAI4GHz2eAymzunQYhrv2D9;
+	sk:snnn29qdCJSsqWpF5ZcfAZMlgj2KQD;
+yuque>baiSnake*2;
+nacos>nacos*2;
+github>toughWorker007:6yuanmao.;

@@ -1,0 +1,103 @@
+1.m-v-vm:vm作为m和v的调度者。
+2.
+	2.1.json两种格式；
+	2.2.<script>标签此处写在了<body>标签体。
+<div id ="app">
+</div>
+<script>
+var vm = new Vue({
+      el: '#app',
+      data: {
+        msg: '欢迎学习Vue' /
+      }，
+      methods:{
+		methodName(){
+	    }
+	    fun:functionName(){
+	      this.visible = true
+	    }
+     }
+})
+  </script>
+3.插值表达式：{{msg}}无论何时，==绑定的数据对象上属性发生了改变{{}}都会动态改变;
+4.系统指令：
+	4.1[v-on:click等于@click；
+	4.2[<div v-text="msg"></div><div v-html="msg"></div>(msg是含标签的文本)
+5.属性绑定：
+	[:class=""等于之前的class="";比之前多了个“:”;此时的:class可动态赋值；值为json的两格式。
+6.绑定：(v-bind(单向),v-model(双向))：v-model(vm的实现,视图标签和data区的值双向绑定)：
+	<input type="text" v-model="name" />{{name}};data区name:""。
+	通过观察{{name}}发现改变视图可改变data区的name值；
+7.v-for；在data区放一个list:[1,2,3];
+<p v-for="(item, i) in list"(固定格式，第二个值是索引)>
+        索引值：{{i}} --- 每一项：{{item}}
+</p>
+8.v-if[data区放一个{ok:true},
+然后<p v-if="ok">这是使用了v-if的p标签</p>
+       <p v-else>这是使用了v-else的p标签</p>
+9.v-show[data区放一个{ok:true},然后<p v-show="ok">这是v-show的p标签</p>
+	9.1.条件渲染
+		9.1.1.v-if
+			利用内存进行计算 适用于页面经常变化的情况 只使用一次结果
+		9.1.2.v-show 
+			适用于页面不怎么变化 缓存页面数据 性能更高一些
+10.splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目。
+11.钩子函数：
+	beforeCreate,==created（数据模型初始化，页面还没有加载数据）==,
+	beforeMount,==mounted（页面已经加载数据）==,
+	beforeUpdate,updated,
+	beforeDestroy,destroyed。
+12.axios即VueJS的ajax；vue-resource推荐axios;
+	ES6的语法：then(res=>{}) 等同于ES5中的then(function(res){}}
+	例：axios.get('url').then(fun(res){});
+	axios.post('url').then(res=>{});
+12.1.get:
+axios.get('/user?ID=12345')
+.then(function(response){
+	console.log(response);
+})
+.catch(function(err){
+	console.log(err);
+})
+.finally(function(){
+
+});
+12.2.post:
+axios.post('/user',{
+  name:'name',
+  age:'22'
+}).then(function(res){
+	console.log(res);
+}).catch(function(err){
+	console.log(err);
+})
+.finally(function(){
+
+});
+
+13.生命周期：beforeCreate(对象未创建);beforeMount(data区值已存在，但并未渲染);
+	beforeUpdate(data区值已更新，但并未渲染替代旧值);
+14.渲染：将data区的值赋给展示标签;
+15.[:fieldName]已经是v-bind单向绑定了,v-model是双向绑定。
+16.[:fieldName]单向绑定已可实现回显了，随着data区数据变化改变。
+17.get(){
+	ns.get().then(res=>{
+		some..
+	})
+}
+
+
+
+
+ElementUI：
+0.ElementUI是一套基于VUE2.0的桌面端组件库；
+1.常用组件
+（1）Container布局容器（用于页面布局）
+（2）Dropdown下拉菜单（用于首页退出菜单）
+（3）NavMenu导航菜单（用于左侧菜单）
+（4）Tabel表格（用于列表展示）
+（5）Pagination分页（用于列表分页展示）
+（6）Message消息提示（用于保存、修改、删除的时候成功或失败提示）
+（7）Tabs标签页（用于一个页面多个业务功能）
+（8）Form表单（新增、修改时的表单，及表单验证）
+

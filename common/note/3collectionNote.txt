@@ -1,0 +1,39 @@
+1.List有序可重支持索引，set(少了value的map)无序不可重不支持索引；
+2. LinkedHashMap有序不可重，平常集合都用了List_ArrayList(有序可重),当需求有序不可重时，适于LinkedHashMap（此时一般额外提供一个new ArrayList(linkedHashMap.values())供后续显示值或其他操作）。
+3. list.size();
+3.1. Arrays.asList(args);数组没写toString()，List写了。list.toArray();表变数组了。
+5. Arrays.asList(T... a);=List<T>,拿到的LIst<T>调用add(),remove()等方法时报异常。english_introduce:Returns a fixed-size list backed by the specified array.
+
+1.1. {i}Collection->List and Set(->HashSet(ByHashValue) and TreeSet(自然排序));
+1.2. {i}Map->HashMap and hashTable(->properties(load(),store()));
+1.3. 遍历map:keySet();values();entrySet();
+list.add(meta);linkedList的插入虽然快，但找到相应的元素是还是要for遍历寻找位置。
+
+
+1.TreeSet的add()调用了TreeMap的put();
+1.1. HashSet依据hash值排序，TreeSet排序不传参依照元素的。
+2.	HashSet(HashMap)元素可以为null，TreeSet(TreeMap)添加元素不可为空，因为Tree放值时会调用compareTo()方法；
+3.	ArrayList.sort()与TreeSet(TreeMap)排序机制相同;
+	11	set无序(hashcode,array+list)(hashcode()+equals());TreeSet和TreeMap有序.
+2.	取出map.entry时，将其（Hash$Map(内部类,外部不可视，故借用其实现的接口Map.Entry)）强转成Map.Entry;
+
+	map装第(0.75*length)个位置同时扩为32；
+
+
+1.	ArrayList:ArrayList 7gen initCapcity is 10，8gen get better,init 0,add->init10;load factor=1。满了才加。
+2.	HashSet(a hashmap which without values):new HashSet()->new HashMap；
+	hashset:array+list;8gen: old element in array;7gen:new element in array;7up8down;
+	用hashSet做过滤相同元素操作效率较高。hashset元素作比较时还要重写hashcode();
+	hashset 7gen initCapcity is 16;8gen get better,init 0,add->init16;load	factor0.75;grow->32...64..128..(<<1)(向下取整);
+3.	HashMap:7gen:array+list;8gen:array+list+red-black-tree;使用set的方式存储map的key,so we should override key's Type's equals()and hashcode();to ensure no sequence and no repeat;
+	如果是treemap就不管hashcode()和equals(),treemap排序方式是自然排序(comparable)和定制排序(comparator)；
+	HashMap:7gen initCapcity is 16，8gen get better,init 0,add->init16;load factor=0.75。
+7gen(超过0.75且要放在数组内的位置不为空时才扩)。扩容时把旧元素重新计算放入新的大容量数组(扩容时新建数组并将旧元素全部经重新哈希计算后放入新数组)。
+8gen:比较时，当hashcode()和equals()都合格时，新元素的value替换掉旧元素的value。
+	array.length>64 && 某个点长度大于8时，链表变红黑树；
+3.1	HashMap:array<Node(7gen:Entry)>[]{}->[16];a.put(k,v),调用k所在类的hashcode(),得到哈希值12345,然后12345&15得到位置;得到位置后哈希值相同时,equals()也相同时,新元素替换掉旧元素；
+4.	Treeset和TreeMap底层都是红黑树。TreeSet（去重机制）排序:自然排序(comparable):让元素实现Comparable接口,以compareTo()为依据。和定制排序(comparator)：new一个TreeSet（new comparator(){}）,以重写的compare()方法为依据排序。
+5.	Stringbuffer的默认初始容量时16，装不下了再扩展，扩为2倍+2；
+
+
+j7的HashMap的数组结构被指定长度时，真正的长度是2的幂次方。数组的当前索引不为空时才会触发扩容，2*oldLength。rehash(),&length-1;

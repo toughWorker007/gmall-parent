@@ -1,0 +1,54 @@
+书城:1. 单机登录注册；2.servlet&关联数据库(第三段时候用户名输入几个空格就会收到几个空格)；3. 
+mvc:v.1. servlet拿参数->决定跳转；
+
+0. eclipse的编码集格式更改在设置里的workspace选项卡里。
+5. Controller做三件事:1.拿数据，2.调业务逻辑，3.视图解析，页面跳转(转发，重定向，或json)。
+1. div是开始结束两个标签，input标签是自结束标签。option也是自结束标签。
+1. 缓存在服务器端叫session, 在浏览器端叫cookie;
+2. div标签前后自动换行；p标签前后自动隔行；
+3.0. 后台路径(1. 以/开头，/表示当前应用程序的根(在写程序调用资源时，以webapp为根)，对当前服务器而言是绝对路径，2. 不以/开头表示相对路径),前台路径(1. 不以/开头表示相对路径，2. 以/开头表示从服务器的根(即8080端口下)(root目录下)开始进行资源查找,3. 以上下文路径(${pageContext.request.contextPath})开始表示从当前应用程序的根(pirogect_name)开始进行资源查找(上下文的根(context_root，即root目录下的contextPath(一般是项目名，但也可能不是，上下文的根名可更改)))); 3.1 为了避免错误，前台路径都以上下文路径开头。
+3. 项目的全套目录叫开发环境(针对后台路径)；部署位置(针对前台路径)；
+6. jsp的动态包含包常变的资源，静态包不常变的。
+7. 采用重定向避免表单重复提交；
+8. div外联标签，盒子/容器，前后换行；span标签，内联标签，容器/盒子，前后不换行。
+9.js解释型語言(需要實現ECMAScript(js的遵守规范，为了让不同浏览器解析),dom(document.getXxx()句子裏的document對象),bom(window.onload=function(){}句子里的window))。
+10. css:<link rel="",href=""/>。
+11. js:<script src=""><script/>。
+12. js数据类型(1.numeber,2.string,3.boolean,4.null,5.undefined,6.object(1.Function,2.Array,3.Object));
+13. js里函数的参数列表里有一个隐形参数“arguments[]”;
+14. js里函数都自带属性name;函数也是对象。
+15. js里函数中出现this关键字时，this代表的是调用当前函数的对象。
+16. js三类现成对象：1.js内置对象(Array,Date,Math);2.浏览器对象(window,location);3.dom对象(document,body,button);
+17. js代码里给事件绑定函数时,只能写函数名,不能带();如果写的是function_name(),被window.onload自动执行了,且只执行一次;
+17.5 理解:因为有绑定匿名函数的情况;而将匿名函数赋值给变量时，赋给的是一个不带()的函数名。
+18. <ul>和<ol>里<li>如果换行了就变成了两个子对象(空格(算文本了)和<li>),<li>之间的文本不是直接子节点了。
+19. 写页面时候可以<center>括<form>括<table>,格式看着工整。
+21. 超链接也可传参，格式于get方式的url传参相同，不过要自己写.<a href="baidu.com?username=nihao&pwd=123">；
+22. $(this)代表的对象就是触发了当前(this)所在方法的对象.(例:以.className方式执行时若使用this就不是类下所有成员,是当前触发事件的成员)。
+23. 正则://斜线里的[..]是约束内容，后面的一项是前一项的可出现次数({.})。
+25. table->tr->(th-td);
+
+
+jquery:
+1. <base>-<link>-<script>;
+19.0 基本选择器:tagname,.class,#id;ancestor descendant,parent > child,prev+next,prev~siblings;
+19.5 过滤选择器比较有规律，一共两种开头（：和[]）；
+19.55. 选择器和选择方法:选择器是用来选择元素，选择方法是让选择出来的元素去调用。过滤方法全都有()后缀，过滤选择器只有那些not(),eq(),gt(),lt()这几个(大小等非)有()后缀;
+19.6 过滤方法的使用方式都是$("选择器").filter/*();
+29. 层级过滤选择器prev+next(记忆:就当从尾标签开始计算),prev~siblings，选的是sibling元素。
+19. js中样式没有继承性，父类的样式会被子类隔断。
+21. [中括号选择器有!=],其他是:not(...);
+22. 表单对象属性(:enabled/:disabled)是用于input的文本框之类的，input不标明type属性默认就是文本框类。
+23. jq对象数组遍历时非本意就变为dom对象了。
+25. jq操作dom对象的属性值.attr/.prop(checked)(只要存在checked属性就为真了);
+26. dom的checked取值true/false;jq的checked取值checked/undefined;因为jq.attr()获取到的是值。获取属性状态时推荐使用dom拿真假的方式。
+27. dom操作属性是.attribute_name;jq操作属性是.attr()/.prop();
+28. jq转成dom对象时，将jq看成伪数组。
+29. 过滤方法是让被抽选出的对象数组使用，这个数组用不了过滤选择器。
+30. 操作复选框选中状态:dom:true/false;jq:checked/undefined;
+31. 过滤方法.filter()的()里可以放所有的选择器。
+32. 内容过滤器中的:has(selector)，(括号里的选择器不用引号，如果是过滤方法中的has(''),要有引号);括号里放的是选择器(tagname/.class/#id/...)。
+33. $("...").append("..")/.prepend是内部添加。同级添加是.before/.insertBefore("");
+35. 新建节点是$("<tr>"+"<td>nihao</td>");每个子元素(文本元素不括)都以双引号括起；
+36. 属性选择注意""内嵌''，双引号不可内嵌双引号。例：if($("input[name='items']").length == $("input[name='items']:checked").length)；
+37. f12的servlet监听服务器的收到与发出

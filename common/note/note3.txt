@@ -1,0 +1,28 @@
+1.1 class->field->method->method.param->method.result->method.name->method.mapper->method.chineseSteps;
+1. new module->Pom->yml->boot->service;
+2.下软件时候下载绿色版，直接删除解压后的文件夹就算卸载了。
+3.date格式：年月日yyyy-MM-dd;
+
+动态绑定：方法有动态绑定，属性没有。
+1.栈管运行，堆管存储；
+2.	栈空间：实例方法，和变量值；
+3.方法被调用进入栈后叫栈帧（栈F1(main)，栈F2....）。
+3.	heap=young(eden+survivor0(S0,from)+survivor1(S1,to))+old+perm;
+4.arraylist有序可重，hash set,hashmap都无；arrylist+0.5,hashmap(16)+1;hashmap第8个提7个且数组长度>=64时，<=64时先扩数组2倍。再加元素时单向链表变红黑树；
+5.	方法区：永久代，元空间；gc作用区域：方法区，堆区，主要堆区；
+6.	8gen:String pool in metaSpace;metaSpace in realMemory;
+maven:for /r %i in (*.lastUpdated) do del %i;
+
+1.哈希查找无法解决排序和范围。B+树：(非叶子节点)二三树+(叶子节点（数据所在层）)链表（顺序排序且相邻之间有顺序引用）。链表的加入使中序遍历不再需要。
+每个磁盘块可能容量（降低高度）：二三树（p+node+p+node+p）;b+树（非叶子节点）（p+id+p+id+p+id+p+id+p）;
+2.数据库六大操作：增删改查，范围，排序。
+3.1.newProject-2.theOverParentProjectName>3.mavern_version>3.1.projectname>5.encoding>6.active annotation>7.specific jdk1.8>8.fileType过滤。pom->mavenDetail->将父工程mvn:install便于子工程继承.
+
+1.成员变量名一般不叫aList(驼峰的第一部分只有一个字母)这种，生成get()set()方法时自动创造的无法使。
+2. Java中的转换:(1.基本数据类型之间，2.继承与实现)；
+3. idea报错时，通过错误信息快速定位时竖线标识符会出现在错误的左边，右边紧贴着的就是错误。
+3.1. str.subString(v,v2);截取下的一段字符串含其实索引字符。
+
+1、汉诺塔(把所有盘看作两个盘(最后一个盘，其他所有盘看作一个盘))：
+	n盘时的搬运次数=2*(n-1盘搬运次数) + 1；
+2.泛型的尖括号一直报错，先写上后面的参数列表试试；

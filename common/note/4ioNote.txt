@@ -1,0 +1,34 @@
+1. 高24位补零，低八位取值：io流按字节读，读一个字节时，返回的int类型数据是读到的数据对应的ASCII码。返回的int四个字节，一个字节占8位。读到的8位，转成int的32位，高24位补零，低八位取值。
+2. classloder有getResourceAsStream();方法读取类路径下配置文件。
+
+1. 读文件：文件不存在时报异常；写文件，文件不存在时创建文件(前提目录存在，不存在时抛异常)。
+1.1 配置文件一般放在src目录下；
+2.  没有打开追加开关的写出流，建立时会清空文件内容。
+3. outputstream.write()写出后自动刷出去，buffered.write()写出后不会自动刷出去，调用close()或flush()才会刷出去。 
+3.1.  网络传输socket循环读取时，中止条件应该是socket.shutdownIn/Outputstram或者流.close();；；flush()和newline()只能代表一行结束。
+5. servlet代码里拿文件绝对路径时[this.getServletContext().getRealPath("/WEB-INF/upload");]传的参数是项目名根目录。
+
+*ASCII：美国标准信息交换码。用一个字节的7位可以表示。
+* ISO8859-1：拉丁码表。欧洲码表，用一个字节的8位表示。
+ GB2312：中国的中文编码表。最多两个字节编码所有字符。
+ GBK：中国的中文编码表升级，融合了更多的中文文字符号。最多两个字节编码
+ Unicode：国际标准码，融合了目前人类使用的所有字符。为每个字符分配唯一的字符码。所有的文字都用两个字节来表示。
+utf-8：1-4个字节。0xxxxxxx
+		110xxxxx 10xxxxxx
+		1110xxxx 10xxxxxx 10xxxxxx
+		11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+1. File类操作文件本身，未涉及到读取或写入文件的内容；
+2.	file生成的文件都是在工程目录下，而不是模块下。（老师的Test生成在module下）。
+3.0 	调用流时需要传参想连接的文件对象或文件名。
+3. new FileReader(new File("a.txt")).read(new char[1226]);（注:要关闭的流,socket,数据库连接等，别匿名，不方便手动关闭）。最外层处理流(BufferedInputStream)关闭时会自动关闭内层流（InputStream).
+4.	BufferedInputStram默认提供缓存区8192字节。
+5.	转换流记忆：InputStreamReader(ins)->;OutputStreamWriter(outs)<;
+
+ * 抽象基类         节点流（或文件流）                               缓冲流（处理流的一种）
+ * InputStream     FileInputStream   (read(byte[] buffer))        BufferedInputStream (read(byte[] buffer))
+ * OutputStream    FileOutputStream  (write(byte[] buffer,0,len)  BufferedOutputStream (write(byte[] buffer,0,len) / flush()
+ * Reader          FileReader (read(char[] cbuf))                 BufferedReader (read(char[] cbuf) / readLine())
+ * Writer          FileWriter (write(char[] cbuf,0,len)           BufferedWriter (write(char[] cbuf,0,len) / flush()
+
+6.基本属性默认可序列化，一个类要想可序列化属性也必须可序列化。序列化不操作static和transient修饰的成员变量，序列化后transient修饰的属性变为默认值。
+7. eclipse里项目里包下程序中的代码里出现的new File("filename");只有文件名的文件路径默认在项目根目录下(与src同级)。

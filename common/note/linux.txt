@@ -1,0 +1,191 @@
+0、Xshell连接linux端口号是22；虚拟机网段和主系统的虚拟网络设置中的网段保持一致。
+1、Linux清屏命令
+clear
+Ctrl+l
+2、创建目录
+	在当前目录下创建一个新的目录
+		mkdir fruit
+	在上面新建的目录下再创建一个新的目录
+		mkdir fruit/apple
+	使用绝对路径创建单层目录
+		mkdir /root/fruit/apple/sweet
+	使用绝对路径创建多层目录
+		mkdir -p /root/fruit/banana/soft
+		mkdir /root/fruit/orange/acid/sweet/orange -p
+	使用相对路径创建多层目录
+	同时创建多个目录
+		mkdir animal/cat animal/dog animal/tiger animal/pig
+3、进入目录
+	使用相对路径进入指定目录
+		cd fruit/apple/sweet/
+	使用绝对路径进入指定目录
+		cd /root/fruit/orange/acid/sweet/orange/
+	回到当前用户家目录
+		cd ~
+		cd
+4、新建空的文件
+	使用相对路径创建文件
+		[root@a cat]# touch ../pig/hengheng
+	使用绝对路径创建文件
+		touch /root/animal/dog/wangwang
+5、查看目录内容
+	使用快捷方式命令查看目录内容
+		ll
+	使用命令本身查看目录内容（不带任何参数）
+		ls
+	使用命令本身带上参数以详细信息形式显示目录内容
+		ls -l
+	显示目录内容时把隐藏文件或目录也一起显示出来
+		ls -a
+	显示目录内容时把隐藏文件或目录也一起显示出来，但是不显示“.”和“..”
+		ls -A
+	显示目录内容时在子目录名后面附加斜杠
+		ls -F
+	递归显示目录下所有内容
+		ls -R
+	组合使用任意三个参数
+		ls -FRA
+	与管道符号相结合在目录内容中筛选所有文件
+		ls -l | grep ^-
+	与管道符号相结合在目录内容中筛选所有目录
+		ls -l | grep ^d
+6、复制
+	复制文件
+		cp bird /root/animal/tiger/
+	复制目录
+		cp -r cat tiger/
+	复制文件或目录的同时改名
+		cp bird cat/bird2
+		cp -r cat tiger/cat2
+7、删除
+	删除文件
+		[root@a animal]# rm /root/animal/bbb 
+		rm：是否删除普通空文件 "/root/animal/bbb"？y
+	删除目录
+		[root@a animal]# rm -r aaa/
+		rm：是否进入目录"aaa/"? y
+		rm：是否删除普通空文件 "aaa/uuu"？y
+		rm：是否删除目录 "aaa/"？y
+	强制删除文件
+		rm -f bird
+	强制删除目录
+		rm -rf uuu
+8、移动
+	移动文件
+		mv apple banana/
+	移动目录
+		mv banana/ orange/
+	移动文件或目录时改名
+		mv dog watermelon/dragonFruit
+	移动一个目录下所有资源但是目录本身不动
+		mv orange/* watermelon/
+	给文件或目录重命名
+		mv xxx yyy
+9、VIM
+	使用VIM打开一个文件
+		vim /root/fruit/yyy
+	进入编辑模式（进入后就可以随意输入了）
+		输入小写i：在当前光标前面开始输入
+		输入大写I：在当前行开头的前面开始输入
+		输入小写a：在当前光标位置后面开始输入
+		输入大写A：在当前行末尾开始输入
+		输入小写o：在当前行的下一行插入一个空行并开始输入
+	退出编辑模式，回到一般模式
+		按Esc键
+	一般模式操作
+		移动光标方法一：上下左右键
+		移动光标方法二：h往左，j往下，k往上，l往右
+		直接把光标定位到最后一行开头：输入大写G
+		直接把光标定位到第一行开头：gg
+		直接把光标定位到348行：依次输入3、4、8、大写G
+		删除光标所在的行：dd
+		删除光标所在行开始的3行：依次输入d、3、d
+		撤销刚才的操作：u
+		重做刚才撤销的操作：Ctrl+r
+		复制光标所在行：yy
+		粘贴：p
+		复制光标所在行开始的3行：依次输入y、3、y
+		仅修改一个字符：
+			先输入r
+			在当前光标位置输入新字符
+	常用指令
+		显示行号
+			:set nu
+		不保存退出
+			:q
+		保存退出
+			:wq
+		不保存强制退出
+			:q!
+		保存
+			:w
+		查找关键词
+			/关键词
+			按n键往下找
+			按N键往上找
+		替换关键词（/g表示全文匹配，“全文”的意思是在每一行内匹配所有符合查找关键词的内容）
+			:%s/旧关键词/新内容/g
+	使用VIM需要注意的点：
+		别用Ctrl+s保存。因为Ctrl+s表示锁定屏幕。如果不小心按了Ctrl+s，使用Ctrl+q解除。
+		如果提示“发现交换文件”不要紧张，按一下回车键显示出来操作提示，按照提示操作即可
+	小练习：使用VIM编写一个Java类。
+10、查看文件全部内容
+	cat 文件路径
+11、分屏查看文件内容
+	less 文件路径
+		空格向下翻页
+		b向上翻页
+		q退出
+		回车向下一行
+		=显示当前文件展示进度和其他信息
+		查找关键词和VIM中一样
+12、查看文件末尾内容
+	查看文件最后5行内容
+		tail -n 5 文件路径
+	实时查看文件末尾内容（使用Ctrl+c退出tail的监控模式）
+		tail -F 文件路径
+13、在指定范围内查找文件
+	在/root目录范围内，根据文件名查找
+		find /root -name "*.txt"
+14、搜索文件内容但是不打开文件
+	grep 参数 关键词 本搜索的文件路径
+		grep -n am name-list（-n表示显示行号）
+		grep -v am name-list（-v表示显示不匹配的内容）
+15、根据系统的索引搜索文件
+	locate 关键词
+	（注意：由于新建的文件不会自动加入索引，所以要先使用updatedb命令更新索引才能够找到）
+16、进程相关命令
+	分屏查看全部完整格式的进程信息
+		ps -ef | less
+	根据进程名称查询具体进程，要求把无关的其他进程排除掉
+		ps -ef | grep chronyd | grep -v grep
+	查询到具体进程信息后统计数量
+		ps -ef | grep chronyd | grep -v grep | wc -l
+	根据进程id结束进程
+		kill -9 9933
+17、查看网络状态
+	分屏显示网络状态信息
+		netstat -anp | less
+	根据进程名称查询具体进程的网络状态
+		netstat -anp | grep sshd
+	根据端口号查询具体进程的网络状态
+		netstat -anp | grep :22
+18、解压tar包
+	tar -zxvf 压缩包的路径
+	tar -zxvf apache-tomcat-7.0.75.tar.gz
+19、查看命令历史并写入指定文件
+	覆盖方式：history > 文件路径
+	追加方式：history >> 文件路径
+20、查看当前目录的完整路径
+	pwd
+21、打印环境变量PATH的值
+	echo $PATH
+22、使用命令帮助
+	man 命令名（控制方式和less命令一样）
+	info 命令名
+	命令 --help
+23、以普通用户登录系统并提权执行命令
+	示例请参考《[尚硅谷][封捷][讲义]_10_Linux高级命令.pdf》文档
+23.1、查看系统实时的运行状态信息
+	top命令
+25. 运行文件时直接输入文件名会被linux当作是命令到path找；文件名前面加上./时，linux就不把它当作命令，而是当作文件就找到了；

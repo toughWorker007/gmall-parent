@@ -1,0 +1,96 @@
+redis(Strings,hashs,set,lists,sets,sortedSets):开发语言是ANSI C。
+1.redis是k:v数据对；
+2.启动：redis-server文件路径 redis.conf文件路径。一个redis服务器的可执行文件，
+	指定不同配置文件可启动多个；
+3.hash类型：本身就是一个键值对集合。可以当做Java中的Map<String,String>对待。
+	每一个hash可以存储2^32-1个键值对。
+4.Redis中一个key对应一个value，没有多个key对应同一个value的情况。（我试了却可以）。
+5.set类型:Redis的set是string类型的无序集合。它是基于哈希表实现的。
+	set类型插入数据时会自动去重。最大可以包含2^32-1个元素。
+6.zset类型：每个元素都会关联一个double类型的分数。redis由分数来为集合中
+的成员进行从小到大的排序。zset的成员是唯一的,但分数(score)却可以重复。
+7.redis的所有key应该全是String类型；
+8.配置文件里":set nu"，然后回车，标注行号；
+	配置文件里快速搜索[/keyWord],然后回车，搜索输入的关键字；
+	配置文件里替换【:%s/oldWord/newWord],然后回车，替换关键字。
+	redis.conf的dir段落就是rdb和aof的持久化文件位置。
+	redis.conf文件按照一行####name####划分段落。
+9.改变redis的hashes和Strings的值时，直接重新set即可覆盖修改。
+
+10.配置主从：
+	1.直接在命令行输入：【SLAVEOF 127.0.0.1 6379】即可；
+	2.slave把master实时拥有的数据同步到本地，
+	3.slave默认只读不可写(但可修改，一般不改)；
+	4.master不会同步slave的数据变更；
+	5.从机宕机后需要再次配置主从。
+	6.集群的实例数量通常都是单数；死亡容忍度大于(等于不算)1/2具备可用；6-2，5-2；3-1，4-1；
+		info replication:复制品信息；
+11.哨兵(sentinel)模式：提升主从的自动化程度。
+	1.slave&master服务器之外额外再设置哨兵服务器；
+	2.主观下线(sdown)->主观下线的数量达到设置的值->判定客观下线(odown)。
+	3.以哨兵模式启动[./redis-server sentinel.conf --sentinel]
+	3.开启哨兵模式比开始slave多了两个命令：[sentinel monitor masterName 127.0.0.1 6379 deadNum]
+	4.sentinel监测master时附带检测slave：
+		1.slave重启后哨兵会自动将其身份设置为slave;
+		2.master客观掉线后sentinel选举一个slave指定为master;sentinel能改配置文件；
+
+
+
+命令：
+1.NX：not exist
+2.EX：expire
+3.M：multi
+
+增查删(set,add,push)：
+1.Strings:(m)set,(m)get,del。
+2.Hashes:hset,hget,hdel。
+3.Lists:l/rpush,l/rpop,l/rrem。
+4.Sets:sadd,smembers,srem。
+5.Zsets:zadd,zrange,zrem。
+
+持久化(启动时读取持久化：aof文件和rdb文件同时存在时，依aof的文件为准)：
+1.rdb(redis目录下dumb.rdb):
+	1.1.基于配置：save 900 1 ；save 300 10 ；save 60 10000；
+	1.2.命令：save或bgsave；
+	1.3.服务器关闭：如果执行SHUTDOWN命令让Redis正常退出；
+	1.4.(flushall的保存无数据，不可)；
+2.aof(redis目录下appendonly.aof)：
+	2.1.文件里存的操作指令；
+	2.2.aof重写；耗费cpu和内存资源计算一系列操作的结果，
+	储存可直接造成此结果的命令存起来。改文件配置实现aof重写。
+3.对比：
+	3.1.RDB：适合大规模的数据恢复，速度较快；会丢失最后一次快照后的所有修改。
+		Fork时内存中的数据被克隆了一份，大约2倍的膨胀性需要考虑，Linux也有优化手段。
+	3.2.AOF：文件体积比RDB大，恢复速度比RDB慢。效率在同步写入时低于RDB，
+		不同步写入时与RDB相同。Aof比rdb完整。共存时只读取aof。
+	3.3.RDB和AOF并存。
+
+持久化文件损坏修复：执行bin目录下的一个文件，参数是损坏的文件名。
+	/usr/local/redis/bin/redis-check-aof --fix /usr/local/redis/appendonly.aof。
+	修复时会将错误行之后的文件全部截去。损失了一部分数据。
+
+
+
+redis事务(开启事务后提交前所有的指令放在一个队列里。队列里的错误语法不能被检测到)：
+1.命令行
+	1.MULTI：开启事务；
+	2.exec:提交；
+	3.discard(两种执行失败：语法错，指令全抛弃；k:v值类型错：跳过错误指令):
+		3.1.本次开启事务后有语法错误时，废弃本次开启事务后的所有指令；
+		3.2.指令k:v的值类型错误(incrby string)，错误指令跳过。
+			其他指令正常执行，即redis不支持事务回滚。
+redis只支持乐观锁；不支持悲观锁；
+1.乐观锁：假装将来不资源碰撞，资源碰撞时让出资源；
+2.悲观锁：感觉资源非常容易发生碰撞，锁资源，不是放别人不可访问。
+		关系型数据库一般是采用悲观锁；
+
+redis可实现发布订阅，但效果并不出众；ctrl+c退出当前命令块；
+
+redis读写分离：写时不可读，所以读写在不同机器上进行，互不影响了。
+
+事务隔离级别：
+	1.读未提交：脏读；
+	2.读已提交：不可重复读；
+	3.可重复读：操作加锁；幻读。
+	4.串行化：锁定表，表里数据不会改变。
+

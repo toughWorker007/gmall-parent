@@ -1,0 +1,50 @@
+1.SOA:面向服务规则。
+	soa两层：provider(service)-consumer(controller)。
+2.源代码文件：
+	不上传[.idea]目录所有文件和那个[fileName.iml]。
+
+3.checkout切换
+4.merge自带commit命令，然后push;
+5.settings.mirror和里面的jar包是匹配的。其他mirror用这些jar包可能出错。
+6.开发流程：
+	1.传到git
+	2.拿下来给运营部署
+	3.测试
+	4.给程序员debug;
+7.[11_26_gitToken:6276f0b600528337d914575f9200e619ba89876b]
+8.代码提交：commit->push;
+9.sso[service sign on]单点登录
+
+10.虚拟机[ip addr|more]看到的ip地址第四段不加在
+	宿主机ipv4的设置里。宿主机ipv4的设置第四段是[1];
+11.git操作：
+	1.main分支clone/pull文件;
+	2.dev分支开发进度commit到自己分支;
+	3.下班时main分支merge那dev分支;
+	5.main分支文件再次pull总文件并融入;
+	6.提交main分支。错了影响不到dev的代码。
+
+12.各分支共一个缓存区,
+	commit提交时提交到各分支独有的区域。
+
+13.基础框架搭建：
+	1.common,service[,web,service-client(feign)]。
+14.pom.xml内的<scope>provide</scope>表示仅compile生效。
+
+15.架构：
+	1.首页 & 后台管理
+	2.分类查询 & 全文检索
+	3.商品详情
+	4.购物车 & 结账 & 下单 [&SSO]
+	5.支付 [payApi]
+	6.订单后台服务
+	7.库存 & 物流。
+
+16.子模块包含子模块时：
+	选择路径时注意加一层，不然在外层了。
+
+17.后端端口号和前端服务器端口号都配置在vue模板的conf目录。
+18.返回数据格式：
+	"code":200,
+	"message":"succcess",
+	data:[{},{}..]

@@ -1,0 +1,115 @@
+maven
+1. mvn clean -d(主命令，子命令，带横线的是参数)
+2. 默认生命周期不包括clean生命周期；
+3. provided两个jsp和servlet；test三个junit,springtest,springBootTest;jar包冲突时注意生效范围。
+3.1. 依赖传递一般是compile范围，provided和test范围的不传递；不写是默认compile;
+5、maven项目导入，在右侧maven框点加号添加pom.xml即可。
+6.maven也在环境变量配置了MAVEN_HOME;
+
+linux（CentOs06-atguigu(0621)）:
+0.ctrl+alt:切换鼠标对象；
+1. 虚拟机联网方式：
+	1. 桥接网络：自动获取ip，局域网内其他ip可访问；
+	2. NAT：只有主机能访问，虚拟机可以连外网；
+	3. 仅主机模式网络：只有主机能访问虚拟机。
+2. win:ipconfig;linux:ifconfig,ip addr;
+3. 
+	1.列表LL
+	2.新建文件夹(-p多级)目录mkdir( -p) dir
+	3. 删目录：rm -rf dir
+	3.1. 进入目录：cd dir
+         5&6（复制和移动指明文件(夹)名时可同时进行改名）：
+	5. a目录下的c移到b下的d(同文件夹下rename)：mv a/c  b/d
+	6. a目录下的文件(-r以及文件夹)复制到b下(只copy文件，不dir)：cp  (-r)  a/  b/
+	7. touch摸一下一个文件；
+	8.cat fileName:猫一眼；
+	9.tar -zxvf tarName:解压;
+	
+3.1. 防火墙高冷，不回应，让连接(connection timeout)超时失效；systemctl stop/disabled firewalld。
+5. linux的rpm(-ivh,-e)就相当于win的exe格式的安装包；
+6. utf-8(其他编码应该也是)到gbk的乱码一般是不认识的字；gbk到 latinl一般是一个？;(汉字语系(日韩)和拉丁语系(美俄));
+7. linux的yum安装是网络版的rpm安装。
+8. 查看进程：ps -ef | grep redis | grep -v grep
+9. 查看服务监听窗口：netstat -anp | grep redis
+10.上传到linux的安装包放在/opt；
+11.redhat package manager;
+	1.rpm -i(vh) fileName;安装
+	2.rpm -e/-qa;卸载查询；
+12.poweroff：(远程)关机;
+
+
+
+
+redis（理解(未必是)：广义的map）（3个基本：lpush,set,hset,add,zadd）:
+1.前五个类型:(keys *:返回所有key;*是任意个任意(其实有的也不行)字符，？是一个任意字符)
+	1. 二进制(redis最基本的类型k:"str"，二进制安全(存储方式为二进制)可存超文本(图片)等)；set apple red；incr 		number(只能是整数)；
+	2. redisList([o-n],[-1->-n],[0->-1]);（可看作双向栈）：lpop(2 step:删除这个值并返回); lpush,
+		lrange key:list 0 -1=>遍历list；lrem key count n：在key的list里删除n个值；
+	3. redisSet(无序不可重[自动去重])相当于"Set<String>"：smembers:遍历set；sadd添加元素；srem key 				member [member..]：删除元素；sinsert,sdiff,sunion交集差集并集；
+		sscan key cursor(初始游标);srandmember key [count(default:1)];随机返回一个repeatable数；
+		spop key [count(default:1)]:两步操作，随机删除并返回一个数；
+	3.1. redisHash(redisHash的结构key：{(k：v),(k2：v2)..});hgetall key;hmset stus:hash stu:name a stu:num 1;
+	5. redisZset(set，不过每个元素关联了一个double的分数);
+		zadd score:zset 65 mo 85 mo2 95 mo3：加值
+		zscore score:zset mo:查询mo的值；
+		zincrby score:zset 0.5 mo2;给mo2加0.5分；
+	6. Geospacial（底层是zset）;geopos china:city shenzhen返回位置；
+	7. Hyperloglogs(no repeatable num):大数据去重，占内存小，速度快。
+其他的好像都是三个命令了：
+2. 只输入启动程序的程序名，以默认配置文件启动redis.启动程序名后+空格+配置文件名，以指定配置，运行redis;
+3. list能做栈和队列(lpush)；set只是set(sadd);
+3.1. 配置文件三处修改:
+	1. daemonize(守护进程) no->yes -->后台运行，不影响控制台操作命令；
+	2. logfile "/var/logs//redis.log" -->保存log日志，防止无法排错；
+	3. dir /usr/local/redis -->确定redis持久化文件保存目录；
+5、操作基本k:v时是set命令，其他各容器存值不可能set了。
+6、redisOperate:
+	1、jedisPool.getResource().sadd("key",value);
+	2、redisTemplate.boundValueOps("key").set(books);
+
+docker:
+1、docker工具名；2、image有镜像的意思；container实例；
+2、os里有mirror,mirror generate container;在os里命令行首加上docker关键字操作os和container里的所有资源。
+3、常用指令：
+	1、docker ps(-a);查看(all)容器；
+	2、docker run -id(-it) --name=myos centos:tag (/bin/bash);创建容器(~daemon/~terminal);
+	3、docker exec -it mycentos10 /bin/bash；进入守护进程
+	4、docker start/stop/rm myos ;激活/停止/删除容器
+	5、docker run -di(同-id) --name=myos -v /usr/local/myhtml:/usr/local/myhtml centos:7 ;创建挂载容器，目录不存在时会自动创建目录。目录中间的那个分号前面是宿主机目录,冒号后面时容器目录；
+	6、docker inspect --format='{{.NetworkSettings.IPAddress}}' myos;查看docker的ip
+	7、docker run -di --name=mytomcat -p 9000:8080 -v /usr/local/webapps:/usr/local/tomcat/webapps tomcat:7-jre7 ;创建tomcat容器;并挂载了webapps目录
+	8、exit ;退出当前命令板；
+         9、sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo；		设置yum源为阿里云；
+	10、sudo yum install docker-ce；docker安装；
+	11、docker pull centos:7；拉取镜像；
+	12、docker rmi imageId；删除镜像；
+4、容器安装应用就是通过目录挂载进行。目录对应目录：宿主机被指定的目录有的内容，容器被指定的目录也会有。
+5、docker commit mynginx mynginx_i；容器保存为镜像(tar包)；
+
+
+1、sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo；=》2、sudo yum install docker-ce；=》3、docker pull centos:7；=》4、docker run -di --name=mytomcat -p 9000:8080 -v /usr/local/webapps:/usr/local/tomcat/webapps tomcat:7-jre7 ;
+
+
+git:
+1、命令：
+	1、git add/reset log.java ; 提交到/还原从暂存区；add指令把文件纳入版本控制体系；
+	2、git status ；git状态；
+	3、git commit -m 'logMessage' ；暂存区到仓库区；
+	4、git reset --hard versionId;到指定版本；versionId前七位便可；
+	5、git rm --cached fileName;撤回add的文件；
+2、clone综合命令的三个作用。1.下载，2.初始化本地库，3.给远程地址起别名。
+3、merge合并；
+4、linux的文件名以.开始的文件是隐藏文件，windows系统不是，是自己设置隐藏。
+5、git=》工作区 add  暂存区 commit 本地仓库;add文件被git追踪，可随意撤销；commit文件留下版本号，不可撤销(除非删掉本地仓库)；
+6、操作远程仓库时一般先更新一下再操作。防止拿到不是最新版本。
+7、git init;不创建签名(name,email)不能操作；
+8、git本地仓库的global范围指的是当前登录操作系统的用户；
+9、head指针，指定一个版本；reset原理；
+10、分支：master和hotfix分别指向各自需操作的版本；切换分支就是让head再指向特定的分支指针（指针指向指针指向版本）；
+11、创建或查看分支，后面带的版本id就是当前分支所指的版本id;
+12、git以row为操作单元；
+13、clone时全部拉全部，pull是只拉取有变化的部分；
+14、新建一个空文件夹，进入空文件夹，执行clone远程仓库时做三件事：
+	1、初始化本地仓库，
+	2、把master分支下的文件下载，
+	3、git的remote地址页起了别名origin;

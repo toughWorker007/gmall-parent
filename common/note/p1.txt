@@ -1,0 +1,66 @@
+p1:
+1、方法抛出一个运行时异常(无需捕捉)未手动捕捉时，抛出异常的句子之后的代码不会再执行。
+0、用maven插件启动web项目时,没配置项目路径(application context)，一定程度上算是没了前台路径后台路径的问题；
+1. dubbo开启tx注解支持时指定proxy-target-class属性，值为true。其作用是使用cglib代理方式为Service类创建代理对象;
+2. 创建meinian_interface，子工程，打包方式为jar；
+3. 开始的七个模块在同级目录下，不分子包；
+3.1. vue业务块里只有方法体内才会用等号和分号，一般都是k":"v和逗号。data体和methods体内（data:{}）大元素之间是逗号,methods体内的方法块内才会出现分号。
+5. 双向绑定是v-model;
+6. vue控制的div块内的标签含有属性格式:attr的，意为此属性受vue代码块控制。
+7. p1的七模块只controller-service-dao配置了appContext.xml文件。controller和service配置了dubbo.dao只是配置spring.
+8. vue块内的$三个用法：1、vm.$refs用在拿到所有的ref(="dataEditForm")属性；ref的值是当前表单的所有组件和数据。
+		{vm.$refs 一个对象，持有已注册过 ref 的所有子组件（或HTML元素），
+		使用：在 HTML元素 中，添加ref属性，然后在JS中通过vm.$refs.属性来获取，
+		注意：如果获取的是一个子组件，那么通过ref就能获取到子组件中的data和methods；}
+		2、vm.$message拿到弹窗（类似alert()的那个弹窗）；
+			this.$message({message: res.data.msg，type: 'success'});
+		3、this.$prompt("str","str",{}).then(()=>{})
+9. 请求不携带参数时请求方式可以使用get方式。
+10. 业务逻辑处理删除业务时，第一步先查询数据库是否有此条数据，没数据直接返回错误提示；
+11、vue业务块除了方法体内，其他大括号内都是采用类似json格式；{k:v , k:v..}
+12、分页查询service调dao时，dao.find(condition);dao查询传参时只传查询条件即可，页码和容量都让pageHelper控制。
+13、分页查询在mybatis的全局配置文件配置PageHelper插件，插件会在sql语句后动态加入"limit ? ?";所以写sql语句时写按条件全查即可。插件回自动把返回的结果分页。
+14、mybatis的sql语句（select标签内嵌值）附近不可写注释，解析。
+15、打印rpc错误(dubbo.rpc.RpcException)一般是sql语句写错了；或者ServiceImpl上面忘了加注解@Service;
+16、response.data指的是响应的数据，response对象应该还携带了其他的东西，我们一般只用response.data.field;
+17、mvc框架可以把url后面拼接的参数自动传给同名参数；
+18、axios提交的第一个参数是url，这个url是后端解析。
+19、axios常用的两个参数axios.post("url",data),其中@RequestBody注解针对的是第二个参数(data),如果是url拼接(post请求的url也可后接'?'并拼接参数)的数据不被针对；@RequestBody注解只表示将第二个参数(数据参数data(json串))里的key与被标注的参数对象里的属性对应起来赋值。拼接的参数直接同名接收即可。
+20、新增和编辑窗口在拿到返回值之后再关闭。
+21、新增和编辑的业务有时会有一段高度相似的业务。可以额外写一个方法并让此额外方法单独调相应的dao.
+22、报外键错误可能是操作错表了，对一下要操作的表名是否都对。
+23、axios请求收到的response:响应头，响应体，状态码，响应文本，controller返回的数据(response.data)。
+23.1、quartzScheduler：调度器绑定（trigger+jobImpl);
+25、io流边读边写边刷新；
+26、查询一页数据时候一般需要传三个值：1.pageNum,2、pageSize,3、queryCondition;
+27、表格读取四步：xlsx，sheet(itratorable,可游标遍历)，row，cell;
+28、读表格时，建对象XssFWorkBook(inputstream)传路径；写表格时实例不指定路径，xssFWorkBookObj向外写时再标明。
+29、ajax向后台发送日期的json对象时,后台不能直接以日期类型参数接收。格式，属性不对。
+30、数据库查询日期格式数据也可between 2019-3-1 and 2019-3-31;也可以使用sql语句：SELECT * FROM t_ordersetting WHERE orderDate LIKE '2019-08-%'
+31、resultType只能查基本数据类型，引用类型必须resultMap;查出的结果是集合(多行)时，用到collection,单行association；
+32、dao或service里面异常可以声明抛出，在controller里进行try-catch。
+33、spring-security框架里的拦截路径目录下所有资源时候有两个*也就是(/**)。
+34、安全框架自带的默认登陆页面有一个csrf，生效自写的登陆页面时要禁用csrf。
+35、不用security的默认登录页面，自定义时：1.指明，2.参数，3.成败，4.默认。
+36、mounted钩子：页面被初始化后执行；created 钩子：vue 模型被初始化后执行；
+37、Map做参数时加上@RequestBody能接收一个任意名称(参数加了@RequestBody，参数名本就无所谓了)的json数组。
+38、Vue的v-mode是将div中的当前属性和vue业务块的数据双向绑定。可添加。
+39、boolean变量起便令明别起isXxx;boolean变量生成get方法时不是get是is;
+40、预约的OrderServiceImpl模块有点薄弱。判断是否可下订单：判断条件由客观(套餐存在，有余量)到主观(未订过)。查询没有订过时，按条件查询传两个参数(垃圾套餐id，顾客id)，传订单对象(或map)进去；
+41、权限管理：1、配置委派过滤器代理；2、用户，角色，权限；互为多对多，五表查询。
+42、Calender类：calendar.add(MONTH,-12);置为12个月前；calendar.add(MONTH,1)；在给定的日历字段中添加或减去指定的时间量。
+43、结果不符合预期时，打印Controller的返回结果，根据打印结果往两边推。
+44、mybatis的mapper.xml文件里的sql语句用到<号时使用&lt;这四个组合字符代替；
+45、数据传递时一定程度上Map(map.key)和Obj(obj.field)相通。
+46、Json{}或者[]包起来的字符串和没被包起来的字符串。
+47、大量数据返回一个map:map.put("setmealNames",List<String>); map.put("setmealCount",List<Map>);
+48、数据库表和前端数据同时设计。
+49、echarts表格js的"pie"形状数据统计要求两个值时或许一个是key，一个是value，此时传一个map即可。
+50、Excel表格两个下载方式：
+    1、window.location.href="../../template/ordersetting_template.xlsx"；
+    2、new XSSFWorkbook(new FileInputStream(new File(temlateRealPath))).write(response.getOutputStream());
+51、如果发现导出Excel有些复杂, 一般先把Excel制作一个模版. 把模版通过POI读取到内存里面. 获得数据, 动态的给模版里面填充数据, 再响应(Response)文件。
+52、百度地图的map对象所在的<script/>标签在<body/>标签体内。
+53.类对象里有图片时，放的是图片的url字符串；页面自己根据url加载图片了。
+54.redis的set类型的【sdiff和sadd】操作放入/删除无用照片。
+	需要配合定时任务：工作细节+触发器+调度器。

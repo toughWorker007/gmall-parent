@@ -1,0 +1,52 @@
+1.handler:
+HandlerAdapter  处理器适配器
+HandlerExecutionChain 处理器执行链
+Handler execution chain, consisting of handler object and any handler interceptors.
+ 包含当前请求和对应的具体方法
+
+handlerMappings 处理器映射信息
+英文解释:Interface to be implemented by objects that define a mapping between
+ * requests and handler objects.
+   包含了所有的请求信息 和对应的方法信息(requestMapping 地址映射)
+ 
+2.then：
+ 通过 handlerMappings 得到一个 HandlerExecutionChain
+ 通过 HandlerExecutionChain 得到  HandlerAdapter 
+ HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+ 使用 HandlerAdapter 调用目标方法
+   1040行: mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+  
+
+ 3.DispatcherServlet: 
+      dispatcherServlet 类中
+ 1118行 render() 渲染方法
+ 1350    	
+ view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
+  使用internalResourceView 解析视图  执行视图解析器InternalResourceViewResolver
+    拼接路径
+ 1373 	view.render(mv.getModelInternal(), request, response); 渲染数据	
+ 
+ abstractView 抽象类
+ 316行  renderMergedOutputModel(mergedModel, getRequestToExpose(request), response);
+        继续渲染数据
+
+
+4.InternalResourceView:
+ internalResourceView 实现类
+ 145行  exposeModelAsRequestAttributes(model, request); 将数据保存到request中
+ 151行  RequestDispatcher rd = getRequestDispatcher(request, dispatcherPath);
+         获取转发器
+ 171行   rd.forward(request, response);  执行转发		 
+ 
+ 
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

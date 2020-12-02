@@ -1,0 +1,4 @@
+1. 数据库存储字符比存储字节容易。
+2. md5加密将密码通过算法加密成16个字节的长度，再转换成32个字符，将32个字符存储起来。
+3. druid连接池:1. new properties();1.9 Class_name.class.getClassLoader().getResourceAsStream("druid.properties")(这样拿ins流，不然直接file流不易确定文件位置);2. props.load();3. DruidDataSourceFactory.createDataSource(props)(形参是Map,props属于Map);5. dds.getConnection();6. 添加commons-dbutils-1.6.jar; 7. new QueryRunner();8. qrunner.query();
+4. jdbc:	1.Class.forName("com.mysql.jdbc.Driver(Driver类的静态代码块会注册驱动)");2. DriverManager.getConnection();3. conn.prepareStatement("sql");5. pstm.setString();6. pstm.exequteQuery();

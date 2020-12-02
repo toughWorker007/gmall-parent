@@ -1,0 +1,36 @@
+书城:1. 单机登录注册；2.servlet&关联数据库(第三段时候用户名输入几个空格就会收到几个空格)；3. 区分登录与未登录显示状态；5. c(create)r(read)u(update)d(delete);(1. design db,bean;2. page找入口;3. dao->service->servlet);
+v层:
+tomcat:
+37. servlet是单例，不然很多请求服务器压力太大了。
+37.6 servlet标签<load-on-startup>中间是整数，大于零时就是服务器启动时执行(less,faster)，<=0时相等于不写。
+37.5. url+？name=value时，提交方式method默认为get,一般需要手动设置为post,因为当get请求提交name参数时，会将手动写的？name=value覆盖。
+37.3 dao<-db;service<-dao;sevlet放到域里<-service;jsp页面<-域(req,sess,app,因为servlet没有pageContext域)。
+37.2 项目缺失tomcat的javax.http包时，在module_name.iml文件里添加<orderEntry name=tomacat_versionNum>;
+37.1. chrome的缓存使得页面跳转成功时不向服务器发送页面请求直接跳转到缓存的页面。
+37. application context对应着url的端口根目录下的文件夹名(被修改过的project_name).
+37.2 (本条限于记忆:)配置urlptn里开头的/直接将编写的servlet映射到web目录下(先别管:其实是webinf目录下的classes是servlet的根目录)，所以不是web直接子目录的表单请求无法访问到编写好的servlet.(想访问时把请求用../之类的相对或绝对路径跳到web目录下)。
+38. 配置urlptn里开头的/直接将编写的servlet映射到web目录下，代表着http://localhost:8080/jwdemo/;后来被表单请求时，访问页面为http://localhost:8080/jwdemo/demo;
+38.1 web目录下表单提交时,会为表单请求在前面加上http://localhost:8080/application_context/urlptn;如果不是web目录(例如web/pages;则加的是http://localhost:63342/jw8-5-demo/web/pages/urlptn);
+39. http:1.请求行,2.请求头(较重要:user-agent和referer;有时也会有cookie),3.请求空行4.请求体；get没有请求体,url携带了；1.响应首行,2.响应头(content-Type),3.响应空行,4.响应体。
+39.1 post请求数据在请求体中，对请求数据没有大小限制,传文件只能用post。
+40. 重新部署针对的是服务器，是Java代码。刷新页面资源:在配置热部署后刷新页面即可。
+41. 项目新粘贴了页面，页面出不来，重启服务器不解决，则build->build Artifacts->rebuild,再试试。再不行，则现有资源重新部署一个新的服务器。
+43. servlet那些程序部署到服务器之后就当作在部署之前的web目录下。
+44. WEB-INF目录是当前服务器/项目私有的，浏览器不能访问;
+49. 编译期间的web目录，运行期间的项目名目录；
+51. base标签加在本页所有相对路径(不带/的，/开始的是绝对路径)上。/开始的绝对路径被服务器解析时就是http://server_ip:port_num/artifact_name；/开始的绝对路径被浏览器解析时就是http://server_ip:port_num/；
+(记忆:服务器一般都要有项目，不然启动服务器做什么呢（所以解析到项目名）。浏览器要去访问服务器（所以解析到服务器就行了）)。
+52. cookie,浏览器能跳到指定页面，第二次再进入时候程序不报红，结果却和指定流程不一样了这可能是cookie。
+53. 三个解决乱码的对应：1.get:conf:server.xml(改总的);2. post:req.setCharacterEncoding("UTF-8");3. response:resp.setContentType("text/html;charset=UTF-8");
+53.5. 记忆：1. get没请求体，改端口下文件编码设置;2. post:请求对象指定编码；3. 响应对象指定编码格式(server encoding and browser decoding all as finger point)；
+54. 请求转发:1. 一次请求;2. url地址栏不变；3. 可访问WEB-INF目录；4. 转发request对象到目标资源。(5. 地址栏不变，css和js等资源容易出乱子，用绝对路径)。
+55. ServletConfig是每个servlet独有一个，ServletContext是每个应用程序独有一个。
+56. 1. 改配置文件重启服务器，2. 改静态页面刷新浏览器，3. 改代码deployall.
+57. req和resp都是服务器创建的。
+58. session域，与浏览器有关与服务器无关(idea部署tomcat配置默认清除session域，可手动更改)，浏览器状态没变(同浏览器未关闭)。
+59. 失败了请求转发，成功了响应重定向。
+59.1. 使用了request域则用请求转发，不使用request域使用响应重定向，因为响应重定向代码稍微简单些
+56. C:\Users\Legion\.IntelliJIdea2019.3\system\tomcat\Unnamed_springmvc\work\Catalina\localhost\ssmall\org\apache\jsp.jsp文件目录。
+
+57.过滤器：tomacat的一个接口；过滤请求(servlet,jsp,静态资源);
+58.拦截器：springMvc里的一个接口；拦截请求(只拦截控制器);拦截器里有三个方法(pre,post,after);

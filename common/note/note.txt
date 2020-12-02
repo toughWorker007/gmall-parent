@@ -1,0 +1,32 @@
+1	bubblesort循环length都-1；
+1.1 同包里不能出现相同类名，不同包可以有相同类名。
+1.11	idea软件以前Test方法里面不能使用控制台输入（改成main方法）。
+1.1	成员变量有默认值可使用，局部变量不能使用（可赋值不可输出）,输出都不行；
+2	char本质是一个整数；（day2.09字符类型的使用）
+3	外部类权限修饰符只 public 和 默认，内部类支持全部的四个；
+3.1	自加赋自己，先自己赋值给temp，然后自加，然后temp赋值给自己；a=7；a=a++;sout(a=7);
+4	mybatis:domain->dao->\dao.xml(mapper(namespace，querryWords))->SqlMapConfig.xml(typeAliases(domain.package),environments(tx,datasource),mappers(dao.package));
+5	getClassloder()只能读取类路径的文件；ServletContext.getRealPath()是得到当前项目部署的绝对路径，项目运行在哪，它就在那；
+6	可变参数，在形参列表里必须放在最后位置，(int... args),底层转成数组，传参数个数>=0;
+		希望往可变参数形参列表传递参数时，必须传递数组名；
+7	mybatis把多对一当作一对一;(多/一)对(一/多)时不常AccountUser封装全部,常单类包含(主拿从集,从引主例)
+8	int, String都是四个字节
+9	构造函数第一行是superConstructor或thisConstructor,第二行是本类普通代码块与普通属性(普通代码块的执行和普通成员变量的真赋值操作同优先级，次于属性声明)。静态代码块执行和静态属性真赋值操作同等级，次于静态属性声明。另外，子类静态成员优于父类普通成员。
+10	arraylist有序可重，hash set,hashmap都无；arrylist+0.5,hashmap(16)+1;hashmap第8个提7个时，再加元素时单向链表变红黑树；
+11	执行三元运算符时会首先将冒号两边的两个值统一类型；
+12.2	jdk8之前只有{public static final .. field,public abstract .. method();
+12	jdk8中接口新增静态方法与默认方法(default不可省略,此default并非四种权限修饰符之一，写法相同，意义不同，它占据的是abstra的位置，它与public同时存在。写的是default public/public defalut void method();)，静态方法只能被所在接口通过接口名调用(static和重写无关),但接口的public static final属性却可以被子类读到;
+12.1	实现类继承到了默认方法,默认方法能被实现类重写(重写时去掉显式写的default),能通过实现类的对象直接调用，多接口有相同default方法时，继承类继承这多个接口时必须重写公共方法，不然不知道调用的哪个方法体(接口冲突)；
+12.1.5	同时有抽象类和多个接口并包含相同方法时（抽象类中public，接口中default时才成立）类优先原则(成员属性不会类优先，会冲突， would be error,it's ambiguous)，
+想调接口的同名默认方法时:(内部类调外部成员时ClassA.this.field;)InterfaceA.super.method();
+13	方法内的局部内部类用到方法内的局部变量（局部变量被局部内部类访问时默认转为final修饰）时要求局部变量是final修饰的，访问成员变量没事.(原因是防止局部变量访问范围变大，本来局部变量只能在体内更改，不能用内部类更改（final）)(成员内部类可以访问成员变量)；
+14	进程拥有独立的（堆和方法区），一个进程的不同线程共享同一个堆和方法区，各线程有独立的虚拟机栈和程序计数器（pc）;
+15	类修饰符只有public和默认；成员变量可使用四种权限修饰符，局部变量不可。
+16	内部类可以直接访问私有属性；成员内部类作用域是所在外部类的范围内，局部内部类作用域范围是所在方法的方法体内，援引所在方法内的局部变量时要求局部变量是final。
+17	Runnable:new Thread(target){},target不为空时跑target的run，造多个线程时target不用重复,重复Thread对象即可。
+18	调用这final static属性底层有优化不需要加载所在的类就能用了。
+19	wait会释放锁;不考虑lock方式时，notify和wait只能出现在同步代码块或同步方法内,sleep()无要求，在哪调用都行.且是用当前同步监视器调用;notify()和wait()的调用者必须是同步监视器那个对象（锁）.不过lock有别的方式调用；
+21	enum枚举类的成员属性修饰符是private final;
+23. j7后，是左侧有了泛型，右侧不需写。
+23.5. 字符串比较相等是equals();
+25. 乱码，页面里的文字传给服务器时默认以页面的编码格式传递(jsp/HTML页面的首行左右就有明确的指定)。服务器默认不是utf-8解码(iso..)。

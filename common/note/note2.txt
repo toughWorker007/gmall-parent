@@ -1,0 +1,26 @@
+1.	List<Object>和List<String>不存在子父类关系。List<?>可以作为他们的父类，但List不可向链表中写入（除了null），可以读。
+2.           泛型要放类类型，不能放基本数据类型；//通配符上下限:<? extends String>中?<= String;<? super Number>中？>= Number,无限大。其中super的可以往里面放下限（Number）及其子类。extends只能放null；也有<T extends Info>,不清楚细节。
+3	包装类的值与基本数据类型的值比较时，直接比较数值。
+4	程序索引左闭右开。
+5	pc寄存器就是一个指针指向下一个要执行的方法。
+6	thread private:stack(java stack+native library stack)+programmer counter regiter;thread conHave:methodArea+heap;
+7	实例变量：new出来的对象自带给自己的东西。
+8.匿名内部类不被父类接收的话，可调用自己的特有方法。
+9.	常量String字符串相加有优化，判断创建的常量池对象，是否有引用指向。若没有，直接造拼接好的。
+9.1 指向字符串的变量相加时(final修饰的变量不算，那是常量)，得到的结果变量指向堆，堆再指向方法区。
+10.	>>>无符号右移，>>左移，^异或；&上下都是1才1；
+11.	8gen:String pool is in metaspace;only 7gen in heap;
+12.	Stringbuffer的默认初始容量时16，装不下了再扩展，扩为2倍+2；Stringbuffer追加空值时，加了个“null”字符串。
+13.	自然排序，comparable(this.compareTo()),可用于Collections.sort(list),Arrays.sort(arr)，new 了空参TreeSet()或TreeMap()直接输出元素时;定制排序:Comparator(compare(o1,o2)),可用于Collections.sort(list,new Comparator(){}),Arrays.sort(arr,new Comparator(){}),new 了TreeSet(new Comparator(){}) or TreeMap(new Comparator(){});
+14.嵌套方法内的匿名内部类，调用此方法外其它方法内的变量时，要求变量时final；
+15.argument type mismatch异常是参数类型对不上，参数相乘变了类型或者基本类型与包装类的大小写。
+16.常用操作只wait()释放了锁；suspend(),yield(),sleep()这三个都没释放锁。
+17.getDeclaredFileds/methods/constructors()不能获得父类的属性/方法/构造器。getFileds/methods/constructors()可以获得父类的属性/方法/构造器。
+18. 递归方法把最外层看作一个空的大方法体{},里面是范围递减的方法体,然后执行过程从方法体正中向下顺序执行；
+19. 1.子接口继承父接口时要实例泛型；
+19.2.泛型方法中的泛型先声明后使用1.返回值之前<String>;2.参数列表里（String）;
+19.3. 泛型类实例化时要指明泛型类型(防止出现错误报错不明显)。
+19.4. Integer=Integer.valueof("str");int=Integer.parseInt("str");
+19.5 int的最大值是21亿，2的31次方-1；
+20. 1.数字字母下划线$;2.不能数字开始；3.区分大小写；3.1.关键字；
+21.str.substring();可以一个整型参数，也可以两个整型参数；

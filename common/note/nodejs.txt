@@ -1,0 +1,3 @@
+1.nodejs:js运行环境，服务器装了nodejs之后，可在服务器运行js文件。
+2.nodejs可当作高性能服务器；http.createServer().listen(8888);
+3.npm(nodePackageManager):初始化一个npm文件夹：选中文件夹，打开终端，执行命令行[npm init -y];

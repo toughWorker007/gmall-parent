@@ -1,0 +1,7 @@
+1.接口1. 	jdk8之前只有{public static final .. field,public abstract .. method();
+2.	jdk8中接口新增静态方法与默认方法(default不可省略,此default并非四种权限修饰符之一，写法相同，意义不同，它占据的是abstra的位置，它与public同时存在。写的是default public/public defalut void method();),(jdk8新增的默认方法可以被实现类直接援引，也可以被重写，重写时去掉显式声明-default)；静态方法只能被所在接口通过接口名调用(static和重写无关),实现类可以写一个static同名方法，但不是重写，不相关，接口中的静态方法只是让接口通过接口名直接调用。但接口的public static final属性却可以被子类读到;
+3.	实现类继承到了默认方法,默认方法能被实现类重写(重写时去掉显式写的default),能通过实现类的对象直接调用，多接口有相同default方法时，继承类继承这多个接口时必须重写此公共方法，不然不知道调用的哪个方法体(接口冲突)；
+2. 函数式接口：	Consumer-void accept(T t);
+		Supplier-T get();
+		Function-R apply(T t);
+		Predicate-booean test();

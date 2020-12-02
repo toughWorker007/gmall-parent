@@ -1,0 +1,317 @@
+1.mybatis的sql的#{}和${}的差别：
+	#给数据两边加引号，$不加引号。
+2.maven的pom文件内的build<build>的<plugin>等配置也会被继承。
+3.application.properties写多级目录结构时，斜线分隔符向右倒("/")。
+4.页面跳转：
+	[this.$router.push({path:"/course/form/"+this.chapterUI.courseId})];
+	path路径的"/"已经默认在views目录下了。
+	后面加的参数是携带的数据，不再对应层级目录了。
+	和[router/index.vue]页面的[path:form/:bookId]皆是。
+5.[@click="deleteCourse(scope.row.id)"]列表固定写法可拿到本行的[id]属性的值。
+6.vue的一级js方法调用二级js方法，有时传参数(调方法时传了参数)，有时不传(页面固有数据)。
+7.前端debug:console,network(headers,response)。
+8.四跨域：域名不同，端口不同(后台)，协议不同(后台)，域名对ip是跨域。
+9.yml文件":"后面有空格。
+10.file经后端代码传递到oss时，后端代码拿到multiFile可以转成文件输入流。然后把流上传到oss;
+11.upload多个文件，元素名以逗号隔开：StringUtils.join(strList,",");
+12.controller接口，参数接收为List类型(List<String> videoList)时会报错，
+	因为加了@ResponseBody注解的handler,mvc框架会在底层new参数的实例，以实例去接收前端传来的json。
+	底层创建不出来List(no constructor)接数据。
+	resolve:List参数加个参数注解[@RequestParam("videoList") List<String> videoList]即可。
+13.向oss传视频等大文件时，不使nginx跳转，nginx可能报错。
+14.VO和DO转换时，在serviceImpl层先建一个对应的数据。再复制属性。
+15.删除高级节点时判断节点下是否无子节点。
+16.页面对后端服务器发起查询时，看页面需要的对象格式。后端现成的实体类不满足全部属性时，额外设计一个VO;
+17.VO的属性的值就两个格式：list和Object;
+18.实例化接口实例时，泛型推断是声明处标明，实例化省略。
+19.一级元素列表和二级元素列表嵌套循环，为各个一级元素赋值。
+	循环列表时DO转VO;
+20.mp生成都是单表查询，三表查询时，自己写sql,设计了返回的VO，
+	mapper直接设计一个返回此VO的方法即可。
+21.pom.xml的文件目录以右倒斜线做分割。（xml都右倒）。
+	application.properties的目录分隔符也是向右倒。
+22.前端在错误数据前后console.log(data)打印帮助debug。
+23.视频点播：
+		上传：
+		response = new UploadVideoImpl().uploadStream(new UploadStreamRequest());
+		return response.getVideoId();
+
+		删除：
+		new DefaultAcsClient().getAcsResponse(new DeleteVideoRequest());
+25.视频上传组件的上传成功回调方法(uploadSuccess):
+	默认调方法时会传过去参数[file],可以通过file拿到fileName;
+	组件的提交地址写固定后端服务器url：
+		[:action="'http://127.0.0.1:8002/aliyun/uploadAliyunVideo'"]
+	大文件不转nginx了,文件太大，从nginx跳转路径时容易报错。
+26.前端的部分属性可以赋值"[]";
+27.mp分页查询：
+	1.new Page<EduCourse>();
+	2.baseMapper.selectPage(coursePage,wrapper);
+	把coursePage放入查询，执行查询之后page页里以装好了数据。
+28.eureka启动后，访问路径直接ip+port就够了。
+29.eureka服务端要把fetch和registe都手动改为false,不然就报错。
+30.微服务重构：
+	1.pom.xml
+	2.yml
+	3.@Client/Server;
+31.sqlUrl报错：
+	添加@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class});
+	添加时务必检查pom.xml和yml文件发现确实用不到sql,不然报错。
+32.mysql筛选日期字段：
+	可以[>=]和[between..and..]。
+	或者DATE函数：
+		[where Date(fieldName)='yyyy-MM-dd'];
+33.统计每天有多少人登陆网站的逻辑复杂，额外开一个微服务专写这个。
+34.mp逆向工程代码修改路径名的模块名，数据表名。
+35.openFeign调用远程Controller时，
+	方法参数列表的[@Pathvariable]最好加上值,["pathVariableName"]不然万一报错不好找。
+36.注册到注册中心的微服务，注册名不该是下划线，下划线容易报错。“减号”比较合适。
+37.ServiceImpl调用openFeign时加的注解使@Autowired,@resource可报错。
+38.日期组件可直接复制的页面。
+39.统计图用百度echarts;
+40.统计人数实现：
+	1.new DO;
+	2.前端传day,beginDay,endDay查找;
+	3.遍历结果集，日期放xDataList;num放yDataList;
+	4.map.put(xDataList/yDataList);
+	5.return map;
+
+	echarts图标要求一个数轴的数据放到一个列表里。
+	所以后端返回应该返回两个列表。
+	考虑到设计的通用VO的属性已设计为map;
+		即只支持了"{k:v}"形式：
+		1.返回一个{k,map[k:v,k:v]}
+		
+(返回两个list(xData,yData),返回了一个map;map里面两对k:v);
+41.echarts使用：
+	异步请求：
+		一级函数里调用了两个二级函数：
+			1.拿数据
+			2.成图
+			因为拿数据(远程)比成图(本地)慢，所以成图无数据。
+				解决：成图方法放在拿数据方法体内。
+43.	<div v-for="teacher in teacherlist" :key ="teacher.id">
+		<p>{{teacher.name}}</p>
+	</div>
+	单引号v-bind:后面的值是双引号但是是变量，字符串的话双引号套单引号。
+45.nuxt改造：
+	1.封装axios;
+	2.一级js引入'@/utils/request';编写异步请求js方法。
+
+46.nuxt的基本调用：
+	1.一级js导入axios,axios.get(prot+ip+port+/url);
+		一级js:
+			import axios from "axios";
+			export default{
+				asyncData({param}){
+					return axios.get(url).then(resp=>{
+						return {//这个return相当于data区。
+							data:resp
+						};
+					});
+				}
+			}
+
+	2.封装axios:
+		(request封axios,二级js调request);
+		1.根目录新建utils/request.js;
+		2.request.js导入axios,创建一个service常量。
+			export default service;
+		封装之后：
+			二级js:
+				import request from '@/utils/request';
+				export default{
+					queryById(id){
+						return request({
+							url:url,
+							method:'get'
+						})
+					},
+				}
+			一级js再导入二级：
+				import teacher from '@/api/teacher';//可省略后缀名。
+				export default{
+					asyncData({param}){
+						return teacher.queryById(id).then(res=>{
+							return{
+								teacher:res.teacher
+							};
+						});
+					}
+				}
+47.nuxt以asyncData取消了created{}
+	以asyncData的二级return区取消了data区。
+48.但是mounted区还在，
+	mounted区里面可以定义很多组件。
+49.目前只看到这两个区：asyncData,mounted。
+50.标签的一个属性：
+	属性名前未加":"时，属性的值是"value"时，value就当作了字符串。
+	加了":"时，属性的值是"value",value看作是变量，字符串的画要再加单引号。
+	(加了单引号即动态绑定(v-bind)，可实现回显)。
+51.现代微服务安全：
+	访问认证服务拿到(token),拿着token访问目的业务。
+52.一般认证没法解决微服务之间的session共享。
+	1.tomcat拷贝机制拷贝session;
+	2.redis管理session;
+	3.springSession;
+	1.session广播
+	2.自包含(jwt)。
+53.微信登陆流程(1+1+2+2+1)：
+	1.点击微信图标生成
+
+	1.扫二维码传递信息给微信服务器;
+	2.微信服务器返回一个code给客户端;
+	3.客户端拿到[code,加上appId和appSecret]由API(3param)访问微信服务器。
+	4.微信服务器返回access_token和open_id;
+	5.客户端调用API(access_token,open_id)访问微信服务器。
+	6.微信服务器返回个人信息。
+54.nuxt有个"layout区",其实是个属性，值是调用layout目录下的页面。
+	但此属性不属于二级return区，和asyncData区同级位置。[layout:'sign']。
+55.handler+@ResponseBody的返回值是String类型时，不再是网址了，
+	是返回给请求方(async,sync)字符串。
+		sync:是跳转的url网页下打印字符串。
+		async:返回给浏览器内嵌的XmlHttpRequest对象。
+			(xmlhttp=new XMLHttpRequest();)
+			ajax拿到进行页面渲染。
+56.handler+@ResponseBody将handler的返回值类型转json字符串了。
+57.url编码：[%3A][%2F];
+58.微信登陆前置：
+	点击微信登陆图标跳转到二维码：
+		(@Controller)
+		1.url=复制笔记的url;
+		2.String.format(url,appId,uri,"atguigu");
+		3.return Url;
+	
+59.uri和url?
+59.扫码后会访问一个url一般是callbackMethod;
+	callback(){
+		复制url;
+		String.format(url,appId,appSecrete,code);
+		retVal[token,openId] = HttpClientUtils.get(url);
+		复制url;
+		userInfo[name,openId] = HttpClientUtils.get(url[token,openId]);
+		String token = JwtUtils.getJsonWebToken(user);
+		return redirect:url+token;
+	}
+60.拿json字符串的其中一截：
+	hashMap = new Gson.fromJson(retVal);
+	String token = (String) hashMap.get("access_token");
+61.服务端的handler直接再方法内访问其他网址拿到结果：
+	1.String value = HttpClientUtils.get(url);
+62.动态给String的[%s]赋值：String.format(url,a,b,c);
+63.seperator:一般都是右倒，"转义"时出现左倒。
+64.user注册微信后其实有一个[open_id],唯一且不可更改。
+65.改59？
+66.	QrCodeController:
+	[三次访问微信服务：
+	1.点击跳转拿二维码和code;
+	2.appId+appSecret+code跳转拿token+openId;
+	//此时已获权。
+	3.token+openId跳转拿userInfo。
+	]。
+		配置三个属性：
+			1.wxAppId;
+			2.wxAppSecret;
+			3.redirectUrl;//callbackHandler;
+		1.getQrCodeHandler：
+			1.复制baseUrl;
+			2.baseUrl = String.format(baseUrl, wxAppId, redirectUrl, state["atguigu"]);
+			3.return "redirect:"+baseUrl;
+
+			3.//返回值隐式附带一个code参数传递给redirectUrl;
+		2.callbackHandler(String code)://回调
+			1.复制tokenUrl;
+			2.tokenUrl = String.format(tokenUrl, wxAppId, wxAppSecret, code);
+
+			3.String token = HttpClientUtils.get(tokenUrl);
+			4.HashMap retMap[] = gson.fromJson(token, HashMap.class);
+			5.复制userInfoUrl;
+
+			6.String userInfo = HttpClientUtils.get(userInfoUrl);
+			7.新建DO,存到数据库
+			8.String userToken = JwtUtils.geneJsonWebToken(existMemberCenter);
+			9.return "redirect:http://127.0.0.1:3000?token="+userToken;
+
+			3.//appId + appSecret + code访问url拿到token + openId;//openID是user标识。
+			6.//token + openId访问url拿到user信息。
+			7.//数据库以"open_id"查member,查不到时新建DO存储。
+			9.//带着加密信息回主页。
+			
+67.微信登陆流程：
+	1.user请求登录app,
+
+	2.app请求wxService;
+	3.wxService问user;
+	4.user确认;
+	5.wxService给app一个code;
+
+	6.app以(appId,appSecret,code)向wxService拿到(token);
+68.https://www.pianku.tv/py/lJGMsV2NnlDZ_1.html?158064;
+69.格式化时间：
+	1.new SimpleDateFormat("yyyyMMddHHmmss");
+	2.sdf.format(new Date);
+
+70.Predecessors;
+71.csr：view由js拿到数据。ssr:服务端返回html;
+72.ssr的seo:搜索引擎爬虫只认识html结构的内容，不认识js代码内容。
+
+73.写sql:
+	1.course表的信息最多；
+	2.每拿其他表的一个字段需要leftJoin一次，多个字段多次。
+	3.多表查询sql：
+		SELECT
+				a.title,
+				a.price,
+				a.lesson_num,
+				a.cover,
+				a.buy_count AS buyCount,
+				a.view_count AS viewCount,
+				b.description,
+				c.id AS teacherId,
+				c.NAME AS teacherName,
+				c.intro,
+				c.avatar,
+				d.id AS parentSubjectId,
+				d.title AS parentSubject,
+				e.id AS childSubjectId,
+				e.title AS childSubject
+			from edu_course a
+			left join edu_course_description b on a.id=b.id
+			left join edu_teacher c on a.teacher_id=c.id
+			left join edu_subject d on a.parent_subject_id=d.id
+			left join edu_subject e on a.child_subject_id=e.id
+			where a.id=#{courseId}
+
+74.mp框架内支持在mapper接口添加方法，xml文件添加自写sql语句。
+75.查询一定个数的数据时：
+	wrapper.last("limit 8");加在sql语句的后面。
+	排序加个数就查出数量了。
+		QueryWrapper<EduCourse> wrapper = new QueryWrapper<>();
+	    wrapper.orderByDesc("view_count");
+	    wrapper.last("limit 8");
+	    List<EduCourse> courseList = courseService.list(wrapper);
+76.首页图片放到redis缓存：
+	1.List<EduBanner> bannerList=
+		(List<EduBanner>)redisTemplate.opsForValue().get("indexInfo::banner");
+		key值乱码时加一个serializer;
+	2.注解方式：
+		1.项目内新粘贴加入一个配置类，配置关于redisCache;
+		2.[value]属性的值是组名，在[key]之前。
+		3.@Cacheable(value = "indexInfo",key = "'banner'")。
+		4.[key]值的单引号代表[::]。目录分层。
+
+77.视频播放应当获取视频播放认证码。是请求oss服务拿到播放认证。
+
+78.删除多个视频：
+		mvc框架下：前端向后端传参时，参数列表的属性和网址栏的拼接参数类型符合时
+			，自动封装给参数列表的参数。
+	    @DeleteMapping("deleteMultiVideo")
+	    public RetVal deleteMultiVideo(@RequestParam("videoIdList") List<String> videoIdList){
+	        String videoIds = StringUtils.join(videoIdList, ",");//将各个参数分割加逗号。
+	        videoService.deleteSingleVideo(videoIds);
+	        return RetVal.success();
+	    }
+79.创建订单的两个参数：
+		1.courseId;
+		2.userId;[byUserToken]。
+80.app创建订单。支付时微信扫码支付，微信服务器有一个微信支付订单。

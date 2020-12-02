@@ -1,0 +1,49 @@
+1. book_bean:
+	user(db,bean);
+	book(db,bean);
+	Page(bean);[pageItem]
+	cart(bean);[cartItem]
+	Order(db,bean);[OrderItem];
+2. CartServlet时：
+	1.<F>类属性定义cart：只有首次访问时会创建一个servlet，导致所有人公用一个cart；
+	2. <F>addCartItem方法体内定义定义cart，每次点击添加到购物车时都会创建一个cart,上次的数据就不在了。
+	3. <T>方法内判断session域中是否有cart,没有则创建，有就直接拿。
+
+1. 为什么首页转client_page.jsp?
+2. 购物车(数据围绕session,不围绕数据库)定义到session域中。
+3. 定义到session域中的对象(Cart)，在域里新建，定义在方法外，只会在创建时new一次对象，放到方法里则访问一次new一个。只有定义到域里。
+3.1. sql异常影响程序继续运行。
+
+v层:[1. getParam;]2. invoke service;[3. set attributes to scope;]5. to a Page();
+1. 服务器处理流程时，req携带param，封装到bean里。invoke service()或者dao()时，取出参数。所以参数处理可以写在bean 的getParam()的方法里。
+书城:1. 用户单机登录注册；2.servlet&关联数据库(第三段时候用户名输入几个空格就会收到几个空格)；3. 区分登录与未登录显示状态；5. c(create)r(read)u(update)d(delete);(两边向内设计：1. design db,bean;2. page找入口，分析入口业务;3. dao->service->servlet);
+
+
+面向对象：
+1. 业务bean与数据bean；数据库中有表与之对应的bean是数据bean(book)，无表与之对应的bean是业务bean(page分页业务；Cart购物车业务);
+2. 一个页面封装成几个bean,里面数据是否一对一(Cart->CartItem+totalCount+totalAmount)。
+3. bean里面有些属性值是通过其他属性值计算得来的，这样的属性在方法里写好计算。一般写在get方法里。set()方法未必执行，用数据时get()方法执行了。其实都行，写set()方法体内，决定因素属性有值后调用一下也行。
+
+书城：0.9. singleComputer users' login and regist;1.jq handle html;2. html transfer to jsp;3. vcm connect db 3.9.  getBetter View;3.95. resources cdur;5. save+update=>one;(1. 管理图书时进页面就显示全部图书，2. 处理增加、更改业务时页面需跳转到一个有输入框的页面(本页有输入框时不转页也行)，删除、查询不需要换到有输入框的页面。)6. pageBean记忆:1/2,pageData;7. 购物车里的数据不太需要持久化，不买且大量。8. 购物车的购物单项与物品的意义不同，购物单项的数量物品是没有的。
+
+购物车设计：map,xianshi值时将values转list.
+
+error:
+1. req.getRequestDispatcher().forword();
+2. req.getContextPath()=>"/BookStore02";req.getContextPath()前有/后没/；
+3. 项目中加入的新jsp页面无法被跳转时(404),rebuild artifact即可解决(别build,是rebuild)；这样依旧不行时，移除项目，重新添加此artifact;
+5. 加了jsp页面记得rebuild->rebuild artifact;
+6. jq查找jsp页面里使用循环造出的标签时，用.class作为介质的方式寻找，直接#id时，循环出了一堆同id的标签。
+
+3. EL表达式拿值，值不存在时，输出为空。
+5. 要变的数据全封到一个Bean,将分页数据Bean<book/user>泛型，以便复用。
+
+
+
+mybookStore:
+1.html转jsp,替换时.html->.jsp;<html>标签有用。
+1. input check;2. 全换成绝对路径，免得请求转发导致地址不变页面变了。3. relate db;BaseServlet中的反射：
+        [String method = req.getParameter("method");
+        Method method1 = null;
+        method1 = this.getClass().getDeclaredMethod(method, req.getClass(), resp.getClass());
+        method1.invoke(this, req, resp);反射创建时传参(方法名，Class),反射执行时传参(执行对象，要用的参数列表);]

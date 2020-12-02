@@ -1,0 +1,22 @@
+boot
+1、@SpringBootApplication,
+2、@EnableAutoConfigurate,
+3、这个注解上面会@import一个AutoConfigSelectClass,执行class里的selectConfiguration()方法，
+4、找到源码包里一个AutoConfigurate类下的META-INF目录下的spring.factories文件，实例化里面的类；
+5、有的类上标了@EnableConfigurationProperties(DatasourcePros.class)，使参数里的类可加入配置属性。
+6、此时参数里的特定类会有@ConfigurationProperties(value)注解，此注解会读取application.yml等类似文件拿到属性值；
+7、META-INF下的spring.factories文件里的类，会有几个@bean方法返回datasource对象，springBoot通过判断@ConditionalonProperty()决定给实例化哪个。
+8、merge：
+	1、mybatis:yml->mybatis+ spring.datasource
+	2、junit
+	3.redis:yml->spring.redis
+	4.thymeleaf:dependency +yml->spring.thymeleaf.cache=false
+	5.task:@EnableScheduling,@Scheduled(fixedDelay = 3000);
+9、boot整合mybatis,dao接口要加上@Mapper注解,或者在@SpringBootApplication旁再加一个@MapperScan("packageName")；
+10、
+
+
+springData:
+	1、JPA规范是sun公司制定的，本质上就是一种ORM规范，注意不是ORM框架——因为JPA并未提供ORM实现，它只是制订了一些规范，提供了一些编程的API接口，但具体实现则由服务厂商来提供实现。
+	2、spring以整合实现了jpa的框架(hibernate)为目的设计了springDataJpa;
+	3、jpa和hibernate整合时dao接口不用写注解；

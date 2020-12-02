@@ -1,0 +1,24 @@
+resolve：
+
+美年旅游：
+	1.redis高速回显。
+	2.quartz(石英)定时删除图片。
+	3.七牛云保存图片。
+
+
+在线教育：
+	1.视频播放。
+	2.日历。
+	3.ecs安装redis,docker,nginx;
+	4.拖拽文件到xshell上传到linux;
+	5.阿里云存储图片。
+	6.阿里云视频点播。
+
+	7.四次下载：
+		1.[npm install]//base
+		2.[npm install axios]//axios
+		3.[npm ..]//轮播图
+		4.[npm install vue-qriously --save-dev]//二维码
+
+here comes our boy;
+i just did you a favor;

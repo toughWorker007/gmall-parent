@@ -1,0 +1,57 @@
+nginx：
+1、nginx启动不了，改配置文件一般会多删除一个括号；
+2、代理处理请求
+	1、默认是轮询，
+	2、被代理列表后面空一格加属性weight=n;概率为n/total;
+	3、被代理列表的第一行加上ip_hash;以ip地址进行hash算法访问服务器
+	4、被代理列表的第一行加上least_conn;发送到最小连接的服务器；
+
+RabbitMQ:
+1、tcp/ip协议是点对点协议；tcp/ip协议比较耗性能，所以rabbitmq在连接下又设计了频道。
+2、connFactory(5th),channel,exchange,queueDeclare(publisher和consumer皆要队列声明),channel.basicPublish/Consume();有交换机时多加一步通过channel将队列绑定到交换机channel.queueBind()；
+	1、simplePc：producer->queue->consumer；队列声明的队列名和后面操作消息的routingKey保持一致；
+	2、workQueues：simplePc模式多复制几个consumer就行，多队列轮询；
+	3、订阅者模式：producer->exchange->queue->consumer，多加一步channel绑定队列到交换机；
+		3.1、publish&subscribe：
+	4、routing：交换机Direct，队列绑定交换机时需要指定routingKey。
+	
+3、操作交换机和队列都是用channel；
+4、交换机类型四种，常用三种：fanout,direct,topic,header;没有队列和Exchange绑定，或没有符合路由规则的队列，那么消息会丢失。
+5、一个broker(协商)有多个virtualHost,一个virtualHost有多个交换机和多个队列。交换机routingKey分发消息到指定队列。Binding信息被保存到exchange中的查询表中，用于message的分发依据。
+6.topic模式时，queue和exchange绑定时是模糊规则，发布消息时routingKey是确定值。
+mqSenior:
+7.过期时间ttl：timeToLive。
+8.死信队列(3)：超时，超容(将最早的挤出队列)，拒收。可为队列配置参数(x-dead-letter-exchange)保留死信消息;
+9.延迟队列：
+10:消息的确认和回退：
+	1.confirm:实例一个业务类实现RabbitTemplate.ConfirmCallback的特定回调方法。
+
+cloud:
+一：eureka:
+1.eureka的功能是通过instance拿到服务提供者的hostaddress和port，然后加上requestMapping拼接成url，调服务是RestTemplate.getForObject()方法。
+2.例子里连controller都是在服务提供者拿的。
+3. eureka已集成了ribbon:ribbon是客户端的负载均衡，客户端本地有一个服务提供者的列表，通过负载均衡算法，发出请求前已计算出请求要去那个提供方。nginx是服务器负载均衡，请求发给了nginx服务器，nginx进行负载均衡后找到服务器。nginx配置服务提供者时每一组同功能的服务都需要一个nginx.如果是eureka，一个就够了。
+4.ribbon负载均衡把k:v叫作instance，没找到instance就是没找到这个key。instance能拿到port和ip，所以轮询时直接写key，主机名端口号都省略去了。
+
+git:
+1.工作区->(add)暂存区(可不留痕迹撤回到工作区)->(commit)本地库(会写入到历史版本)->(pull/clone<=>push)远程库;
+2.[git reset fileName]撤回暂存区指定文件。
+3.[git reset --hard versionId]版本穿梭。
+4.git status;
+5.git文件夹：
+	1.[.git]隐藏文件夹就是版本库;
+	2.包含[.git]文件夹的目录就是工作目录;
+	3.[.git]文件夹中有很多文件，其中有一个[index]文件就是暂存区，也可以叫做[stage]。
+
+
+springDataJpa:
+1.orm:对象映射到关系型数据库的表结构;操作实体类就操作表;
+2.jpa将orm概念转化为api接口;hibernate是实现了orm的框架。
+	hibernate之后出现jpa;jpa是sun公司为了整合hibernate设计的。
+	jpa->hibernate====java.sql=====druidDataSource;
+3.SpringData的JdkDynamicAopProxy(invoke)和SimpleJpaRepository皆是代理对象参与了操作;
+	SimpleJpaRepository的大量方法已经有了业务方法体;
+	方法体内entityManager再次调用特定(先hibernate再jpa)大量方法;
+
+
+泛型：className<T>,类里的方法的方法体内能用来拿T类型的返回值;

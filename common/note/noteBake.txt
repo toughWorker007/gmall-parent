@@ -1,0 +1,105 @@
+tx,
+9-2，9.35dofilter's source code;
+
+
+10.27-11.18/28；
+14.14；
+10.23-》10.30；
+sql_mod?
+
+ddl,dml;
+
+
+域名是nginx解析还是etc解析；etc解析；
+设置虚拟主机只有一个/是什么？
+消息监听器；
+
+日志里面搜索context path。
+
+渲染视图:
+15.47：
+代理怎么传入的原对象？
+事务回滚连接回收么？嗯
+为什么依旧tx，在dubbo里不cglib代理不可用？
+mybatis的selectKey标签是做什么？
+9.8 -09；
+5.27 9.9
+9.47 . 9.12
+ioc要用到的bean全部都应在ioc里，受ioc管理才行。工厂bean生产的bean不必，但工厂bean需要被管理。
+csrf是什么？
+40、预约的OrderServiceImpl模块有点薄弱。判断是否可下订单：判断条件由客观(套餐存在，有余量)到主观(未订过)。查询没有订过时，按条件查询传两个参数(套餐id，顾客id)，传订单对象(或map)进去；
+
+json格式里kv之间是：分割；
+前端里双引号里面再用引号要单引号；
+
+400，客户端传参格式不对，服务器接收不了；
+406，服务器传参格式不对，客户端接收不了；
+405，请求方式不匹配，
+
+1. dispa能找到mappedHandler,处理，找不到，去找<default/>,找不到，B:404,S:no mapping;
+2. 找到default，能处理，处理，不能，B：404。
+
+SSM整合(springContext contain mvcContext):
+web.xml文件（字符，风格，容器，分发）:
+	1.<CharacterEncodingFilter/>
+	2.<HiddenHttpMethodFilter/>
+	3.全局属性contextConfigLocation.--》<ContextLoaderListener/>.
+	4.<DispatcherServlet<p:contextConfigLocation/>/>
+spring-mabatis（扫描，工厂，扫描，事务）（配置，池子，映射，别名）:
+	1.<context:component-scan/>
+	2.<SqlSessionFactoryBean<p:1.configLocation,2.dataSource,3.mapperLocations,4.typeAliasesPackage/>/>
+	3.<mybatis:scan base-package="com.at.mapper"/>
+	4.<DataSourceTransactionManager/>--》<tx:annotation-driven/>
+mvc.xml（扫描，视图，默认，文件）:
+	1.<context:component-scan/>
+	2.<InternalResourceViewResolver<pre/suffix/>/>
+	3.<mvc:default-servlet-handler></mvc:default-servlet-handler>,
+    	   <mvc:annotation-driven></mvc:annotation-driven>
+	4.<bean:CommonsMultipartResolver>
+
+
+
+7.16 不常用流？
+day22网络编程；
+14.常用类：	Senior:dayo4;
+day16	07,10.20,取消科学计数法，11.25；>>>     >>
+7.13	20，15.20String变量名参与运算时结果在堆中。
+728，11.10
+7.28 	16批处理
+
+lambda就是一個對象，用實例方法表示了一個實例對象(带着方法体的对象)；
+day8\3,11,12;
+
+2. treeset是不是只能放comparable；不是
+3. idea部署web项目放到idea的镜像里，镜像里文件夹不全。
+
+book_bean:
+	user(db,bean);
+	book(db,bean);
+	Page(bean);[pageItem]
+	cart(bean);[cartItem]
+	Order(db,bean);[OrderItem]
+横切切面通知代理目标连接点切入点
+
+1. 通知(advice)：切面必须要完成的各个具体工作;(抽取出的代码在切面里叫做通知)
+3. 横切关注点：每个方法中抽取出来的同一类非核心业务;(抽取出的代码在目标对象中叫做横切关注点)
+2. 切面(aspect)：封装横切关注点信息的类，每个关注点体现为一个通知方法。
+6. 目标(target)：目标对象就是被关注的对象。或者被代理的对象。
+7. 代理(proxy)：为了拦截目标对象方法，而被创建出来的那个对象，就叫做代理对象。
+
+3.1 . 连接点(joinpoint)：横切关注点在程序代码中的具体体现，对应程序执行的某个特定位置。例如：类某个方法调用前、调用后、方法捕获到异常后等。
+5. 切入点(pointcut)：定位连接点的方式。每个类的方法中都包含多个连接点，所以连接点是类中客观存在的事物。如果把连接点看作数据库中的记录，那么切入点就是查询条——AOP可以通过切入点定位到特定的连接点。
+在Spring中切入点通过org.springframework.aop.Pointcut 接口进行描述，它使用类和方法作为连接点的查询条件。
+
+1.scan2.ViewDisolver3.defaultServletHandler&mvcDriven3.1.multipartResolver5.mvc:intercepter.
+2.ds2.aop（）&tx3.sqlsessionfactory.
+
+MySQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`meinian`.`t_travelgroup_travelitem`, CONSTRAINT `item_id` FOREIGN KEY (`travelitem_id`) REFERENCES `t_travelitem` (`id`))
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)
+
+1、mybatis.org/mybatis-3；
+2、mybatis.org/mybatis-spring;
+3、echarts.apache.org/;

@@ -1,0 +1,8 @@
+内部类：
+1.和普通类只是作用域不一样。
+2.内部类有成员内部类和局部内部类(方法/代码块内定义了一个类);
+3.直接看作一个变量即可。(局部变量/成员变量/静态变量/final变量);
+4.内部类外部类变量名重名，指定外部变量名【OuterClassName.this.varName】；
+5.局部内部类中只可访问使用final修饰的局部变量(防止局部变量范围扩大);(jdk8隐式声明final;)
+	两个都是局部时,触发final局部变量;
+6.InnerClassName innerClassName = new OuterClassName().new InnerClassName();

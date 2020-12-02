@@ -1,0 +1,7 @@
+1、a lot of beans->frame as manager;
+2、every bean is obj，not any obj is bean;
+3、bean 是由BeanFactory创建的
+回调函数(I)BeanName/BeanFactory/ApplicationContextAware;
+
+
+1、SpringData的排序查询findAll();属性名不认识"user_id"之间的下划线。

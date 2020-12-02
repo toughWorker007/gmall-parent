@@ -1,0 +1,195 @@
+framework+logic=project;
+
+around通知，el(proceedjoinpoint(extends Joinpoint));proceedjoinpoint.proceed()[这个就代表执行目标方法];
+
+SSM（开启事务有两步，1. 添加tx, 2.支持tx注解）：
+web.xml标签加载顺序：1.<contextParam/>2.<listener/>3.<filter/>4.<servlet/>;
+0. (spring里指引xml文件时一般标明路径方式，两种:1. classpath:  ;2.默认WebContent目录下)；
+1. dispa能找到mappedHandler,处理，找不到，去找<default/>,找不到，B:404,S:no mapping;
+2. 找到default，能处理，处理，不能，B：404。
+3. DispatcherServlet的xml文件默认在WEB-INF下的servlet_name-servlet.xml;
+3.1. spring的xlm文件默认在WEB-INF下的applicationContext.xml;
+5. web.xml里的filter上到下顺序加载，所以CharacterEncodingFilter必须配HidenHttpMethodFilter前面了。
+6. 子容器(mvc)里的内容能访问父容器(spring)里的内容，父不能访问子内容。c->(s<->d);
+
+SSM整合(springContext contain mvcContext):
+web.xml文件（字符，风格，容器，分发）:
+	1.<CharacterEncodingFilter/>
+	2.<HiddenHttpMethodFilter/>
+	3.全局属性contextConfigLocation.--》<ContextLoaderListener/>.
+	4.<DispatcherServlet<p:contextConfigLocation/>/>
+spring-mabatis（扫描，工厂，扫描，事务）（配置，池子，映射，别名）:
+	1.<context:component-scan/>
+	2.<SqlSessionFactoryBean<p:1.configLocation,2.dataSource,3.mapperLocations,4.typeAliasesPackage/>/>
+	3.<mybatis:scan base-package="com.at.mapper"/>
+	4.<DataSourceTransactionManager/>--》<tx:annotation-driven/>
+mvc.xml（扫描，视图，默认，文件）:
+	1.<context:component-scan/>
+	2.<InternalResourceViewResolver<pre/suffix/>/>
+	3.<mvc:default-servlet-handler></mvc:default-servlet-handler>,
+    	   <mvc:annotation-driven></mvc:annotation-driven>
+	4.<bean:CommonsMultipartResolver>
+mybatis: 
+1、动态标签：
+	<set>内嵌<if>一般用来去除条件后的逗号；update语句有的列改有的不改；
+	<where>内嵌<if>一般用来去除条件前的and或or;
+2. 批量删除，模糊查询参数拼接（$()），条件前面的变量(例:表的名)也用拼接.
+3. mybatis传参传集合时，当作传对象(#{key})看就可了。
+3.2. <association>是一对一，一对多是<collection>.
+	直接查询，[javaType/ofType=allClassName],分步查询[prop,select(allMethodName),column(参数列)]。
+3.3:普通查询：
+3.3.1. resultMap-2L.<id prop,column>-<result prop,column>-<association prop javaType--3L.<id..>-<result..>>.
+3.3.2. resultMap-2L.<id prop,column>-<result prop,column>-<collection prop ofType--3L.<id..>-<result..>>.
+3.5. 分步查询：分步查询的各步骤分别是一个独立完整且可单独执行的一个。
+3.5.1. resultMap-2L.<id prop,column>-<result prop,column>-<collection prop select column>.
+5. batis传参时一个参数传就行了(复杂类型(非8p或String)时)，复杂类型时，可以直接#{fieldName}.多个参数时(args0,args1...或param1,param2...);
+5.1. mybatis传参时，集合一般不看作对象，需注解参数起别名，因为没办法.属性，其实不用.属性，直接属性名。
+6. mybatis环境下(动态sql的各标签体内作为属性值)，标签判断属性是否合法时直接写属性名即可(不用EL表达式)。非mybatis环境时(sql语句内)，#{}${}取值。
+6.1. 对象导航图语言，mybatis环境(类似jstl语法)下取值时不必借助el表达式了。
+7. mybatis的动态sql的标签:1]. <if(test="true/false"),
+	2]. where(去条件字段前面的and/or),
+	3]. trim(<trim suffixOverrides="and" prefixOverrides="and" prefix="where">),
+	3.1] choose(when,otherwise),set(去更新字段后面的逗号),
+	5.] foreach( <foreach open="id in (" close=")" collection="list" item="id" separator=",">)>
+	6.] <include refid="sql1"/>;
+8. mybatisGenerator查找文件所在路径时按照编译前的路径。去文件系统里面找了。用到的xml文件里的"\"是代码里的"/"，设置相对路径时的"."看作根节点(不是src源码目录，是项目目录后面添加/src)。
+9. 多个参数姝时候,Mybatis会把所有参数都封装为一个Map去使用,Map中的key就是我们在#{}中写的参数名，那现在如果直接传进来一个map..我们只需要在#{}中写是map的key就可以取相应value的值注入到占位符中。
+9.1、多个参数时候，mapper.xml文件为sql语句指定形参时没法描述，所以多参数，将多个参数封装为一个bean或map,然后sql语句取参时，一般#{key/fieldName}就行了。parameterMap是做级联(通过一张表查询/更新另外一张表)时候用。
+10. (mabatis标签里设置属性时属性单词一般enabled在后面，例: <setting name="cacheEnabled">).但是mybatis-generator.xml里enabled放前面，例:<property name="enableSubPackages" />。
+11、mybatis的mapper.xml文件查询返回一个集合时，指定返回类型resultType指定为集合盛装的元素的类型。返回从数据库中真正查到的sql行所对应的bean.mybatis会自动为接口中方法返回值的对应属性赋值。
+12、insert语句内嵌<selectKey/>时会变为两步操作：
+	1、插入对象，2、将<selectKey/>查到的数据赋值给被插入对象的指定属性。
+
+spring: spring核心四包：core,context,beans,expression,5加日志logging,6加注解aop,7.8mvc:web,webmvc,9.10做列表加jstl和standard或者两个taglibs也行。
+0.1. ioc容器能管理对象生命周期，web容器能管理servlet的生命周期。
+0.2. iocContainer.xml里只有<value>...</value>之间可写文本内容。
+0.3. FactoryBean和BeanFactory, Beanfactory是ioc的顶层接口，FactoryBean是bean,直接调了内部制造bean.
+0.5. propsDI时，value是8primary(wrap也算)和String类(字面量)，复杂类型(beans里的)使ref(bean)。
+0.6. 自动注入也可赋值方法参数；
+7. 注解过滤时type属性一般使annotation,使assignable时，component会将子类也算进去。
+1. Bean的生命周期：1.constructor->2.init->3.destroy.
+2. 属性ref="",一般都可以用<bean>/<list/map>之类的内部bean替换掉。内部bean与内部类很大区别。内部bean只为赋值，内部类是个内部的类。
+3. 记忆:bean的class属性针对着new Constructor()的返回值;factory-method对应着所指静态方法的返回值(实现factorybean时，底层自动调用了重写后的getObject())。
+3.1. ApplicatonContext的对象创建时默认会立即反射创建配置文件中的对象；更高的一个接口Beanfactory是延迟加载。service,dao不要有类成员变量，为了采用单例；
+5.spring的autowired(自动注入)，在容器里找唯一相对应的类型时跳过key,直接在values里的值中寻找。有多个同类型值时，比较需要被注入的变量名和key值。
+6. xml配置过滤注解时，若使assignable,则被指定过滤的类与其子类都会被过滤。
+7. spring的各个component就是ioc容器管理的各个类。
+8. util名称空间，可以定义全局公共的集合信息,方便容器直接获取,或者是给属性赋值。
+9. beans属性赋空值时直接不写value或使<null></null>,不可value="null"(String).
+10. beanLife(单例):constructor->BeanPostProcessor_init->bean_init->use->(app关闭前)BeanPostProcessor_destroy.
+11. 泛型注入:注入时泛型也需要匹配。BaseService<User> baseService;=>[UserService<User>/BookService] extends BaseService;
+12. 配置文件的bean继承(知名parentbean)时，不是继承，而是传递了属性。bean属性abstract为true时，只表示这个bean不让getBean()了;类未必时抽象类。
+13. component-scan基包下的子包也会被扫描到。
+13.1 aop基础知识时的xml配置方式:<aop:config<aop:aspect<before,pointCut/>/>/>。
+15. 多个切面未指定order注解时执行顺序依照首字母排序，指定order注解时，依照order值(lesser=>before,beginWith 0);
+16、spring框架涉及到的bean都是@Component注解了,有一个:factoryBean返回的bean不需被注解,但是factoryBean需要.
+17.多个springAbc.xml文件之间可以在内容里通过<import p:resouce />标签互相导入。
+18.Spring之JdbcTemplate实现数据访问。
+19.常见三个ApplicationContext：1.ClasspathApplicationContext;2.AnnotationApplicationContext;3.WebApplicationContext;
+
+20.源码：
+	web.xml里ContextLoaderListener源代码：1.ContextLoaderListener extends 
+	ContextLoader{contextInitialized(){initWebApplicationContext(servletContextEvent.getServletContext())}}=>此处initWebApplicationContext(){this.createWebApplicationContext();以
+	及servletContext.setAttribute(springContainerName,前面create的spring容器)}。
+即：ContextLoaderListener{initWebApplicationContext(){createWebApplicationContext();以及servletContext.setAttribute}}
+
+杂记：@WebServlet的一个class是tomcat提供的；mvc进一步封装，类可称为Servlet之外，多加了handler的概念。SpringApp启动后，大范围角度可看作有三个容器：tomcat的Servlet容器=>springFramework=>mvcContainer等等被spring整合进来的容器都是spring的子容器;
+	2.XmlWebApplicationContext有常量属性="WEB-INF/applicationContext.xml";
+
+aop(xml:scan->aspectj_auto-->切面(aspe,compon,before));
+1. 切面通知连接点。
+2. 全通配:* *.*(..);较合适版:* com.net.service.impl.*.*(..);亦(* com..BookService.*(..));
+3. proxy:传入目标对象，代理方法拿到了目标对象的最高父接口，然后创建此接口的子类，故只可转为接口类。
+5. spring的声明式事务默认（可更改都回滚）只对RuntimeException触发回滚，对编译期异常不触发回滚，并且将大Excption看作是编译期异常。
+3.1. Spring通知的执行顺序是: 前置通知===》>>目标方法===>>>后置通知===>>>返回值之后/异常通知。
+5. tx两个标签，一个是配置，另一个是注解关联驱动。
+6. tx(timeout(s)，默认-1(永不超时)),事务设置超时回收事务，事务回收时会把连接收回。
+7. tx基于连接,事务传播行为的REQUIRED时大事务内所有小事务共一个连接,REQUIRED_NEW时挂起大事务自开connection.
+8. tx:配置1.<B:DataSourceTransactionManager<p:datasource/>/>,2.配置<tx:annotation-driven tx-m:txm/>
+
+
+springmvc（manage req&resp）:
+
+1.mvc配置默认小程序处理器，其默认拦截路径页是/，和dispatcherServlet一样，Dispatcher的优先级高。Dispatcher拦不到的交给默认的Servlet拦。
+2.<mvc:annotation-driven>标签一放，底层就会自动配置三个组件。
+	1.应该有一个是让Disp比Default优先级高。不配置时servlet请求来了,两个处理器，就报错了。
+	2.还有一个使handler返回的JavaObj自动转为json(前提导入了Jackson的jar包)。
+3.1. handler的返回值，不管是字符串还是view对象，底层返回的都是一个ModelAndView.
+5. HandlerExecutionChain就是handler+intercepter.
+6.handler一般返回String字符串，将返回值设置为void时，会默认将requestMapping("url")作为返回值返回。因handler默认生成一个ModelAndView，返回void也会生成这个对象。
+
+0.1. (I)View(处理模型数据，实现页面跳转)有一个实现类(A)AbstractView->一个实现类InternalResourceView->两个实现类JstlView和RedirectView. mdelAndView据情况实现。亦可(InternalResourceView)AbstractUrlBasedView.buildView();
+0.2. web项目的两个经典路径：一个是类路径，一个是webContent路径。
+0.3. 编码过滤器在web.xml文件里要配在所有过滤器的第一位，一般直接就是第一个。
+0.5. view对象，不加jar包生成InternalResourceView,加了jstl的jar包生成jstlView(也是转发视图)；返回字符串redirect:生成redirectView.
+0.6. ModelAndView对象的3方法:getModelInternal(),getModelMap(),getModel(),结果一样，都是返回this.model;
+1.sevlet的配置<url-pattern>不能写/*，只能写/。是因为tomcat基本的web.xml对servlet(/)和jsp(/*)已配置不同优先级的拦截路径。编码过滤器的写/*，和核心控制器相反了。
+2. mvc方法的set域，1. map.put();2. model.addAttribute("n","w");3. modelMap.addAttribute("n", "w");
+和最原生的ModelAndView.addObject("n","w");map子类的参数(model,modelMap)都是BindingAwareModelMap.
+3. servlet的<load-on-startup>1</load-on-startup>自0开始的整数越小越先，负整数和不写一样。
+3.1. 注解aop的切面排序order();int越小越先。默认Integer.MAX_VALUE最低优先级。
+5. Controller做三件事:1.拿数据，2.处理并将结果放域，3.视图解析，页面跳转(转发，重定向，或json)。
+6. ant路径三种符号：？，*，**；
+7. 三种传参方式：
+	1. 路径传参：@RequestMapping("nihao/{id}/{name}");占位符方式路径映射。将该层路径放到占位符位置，
+	参数列表可参数前添加@PathVariable注解拿到该层路径值(一般是传递的数据)。
+	2. 超链接问号传参：(url+?+"k=v");
+	3. form表单传参。
+8. 请求路径共8个，常使的4个。超链接不能设置POST请求。
+9. web.xml加载顺序listener->filter->servlet.前两个服务器启动时加载，servlet默认第一次访问时加载。
+10. mvc的参数不同名时赋值：@(Request(Param/Header)/CookieValue)(value="username",required=true(默认值,无此参数时报错。不用注解赋参数值时为空没事),defaultValue(分页时默认值0，模糊查询不传值查全部)="str")；
+11. pojo参数，在表单元素属性为name=address.province，value="aa"类似格式时，支持级联属性赋值。
+12. 下载：session.getServletContext().getResourceAsStream("upload/" + fileName);
+12.1. 上传：upload.transferTo(new File(session.getServletContext().getRealPath("upload"),fileName));
+12.2 session.getServletContext().getRealPath("director");最后这括号里填的好像都是文件夹名不是文件名。
+13.文件上传:本来传的是一个File，mvc的handler(处理请求的方法)在形参列表用MultiPartFile/[]类型接收，所以在mvc.xml要配置<CommensMultipartResolver<p:defaultEncoding，值和页面编码方式保持一致/>/>，此bean的id必须multipartResolver.
+13.1. xml特性：存储的信息全是纯文本。赋值时不能使表达式,不能加减乘除。
+15. request.getParameterValues()获取表单相同name属性的所有values;
+
+16. intercepter:preHandle(),postHandle()在afterCompletion()之前；
+	是preHandle方法返回false时通过if判断，直接调用了它前排拦截器的afterCompletion(),postHandle没被调,
+	和顺利执行的afterCompletion();自己写的第一个preHandle返回false时,
+	默认拦截器的preHandle()和afterCompletion()会执行;
+
+	(preHandle方法里if判断,返true时，interceptor'size+1,返回false时，数组倒序调且不加size);
+
+17. 拦截器与过滤器都是先进后出。mvc自带的有一个最前排(接近Browser)的拦截器(ConversionServiceExposingIntercepter);
+18. 3个类：Intercepter(notRequired conf),CommonsMultipartFile(conf in mvc.xml),HttpMessageConvert(no conf);
+19.mvc默认提供的有一个DefaultHandlerExceptionResolver处理一些异常，帮忙打印错误路径。自己更改处理方式时，配置一个类:<SimpleMappingExceptionResolver<props<prop k>v</>/>/>,其中v的值是视图名称会返到视图解析器。捕捉到异常时其实会发出一个ModelAndView对象。同时SimpleMappingExceptionResolver也将异常类名放到了request域里。
+20、mvc框架的handler返回重定向字符串时，底层自动在路径前加项目名。
+21、requestMapping可以把传来的数据根据数据的name自动赋值给同名参数。
+22.过滤器：tomacat的一个接口；过滤请求(servlet,jsp,静态资源);
+23.拦截器：
+	1.springMvc里的一个接口；拦截请求(只拦截控制器);
+	2.拦截器接口里有三个抽象方法：preHandle(),postHandle(),afterCompletion();
+
+源码mvc流程：
+	1.请求访问服务器时先到DispatcherServlet_handle(){会将输入的url和RequestMapping注册的mappingUrl做匹配},
+	2.然后到handler，handler可以return一个ModelAndView(modelAndView里的数据默认放到request作用域里);
+	3.返回的结果再到DispatcherServlet_processDispatchResult(mv){
+		1.大提交render(mv){
+			2.resolveViewName(~){拼接urlString}以及小提交view[此处的view是internalResourceView].render(){
+				3.renderMergedOutputModel(){
+					4.exposeModelAsRequestAttributes(){
+						5.1.request.setAttribute(k,v)},
+						5.2.以及rd.forward()结束}}};
+    4.页面跳转结束了还有一部渲染视图。mappedHandler.triggerAfterCompletion();
+即：请求到handle(),handler业务结束返回字符串，底层大提交，小提交，执行转发。渲染；
+
+@杂记：applyPreHandle(){遍历拦截器，被拦下时执行：triggerAfterCompletion(){倒序执行：interceptor.afterCompletion}}
+即：preHandle执行拦截器，拦截器被拦下时倒序执行之前的afterCompletion;其他的毕竟要完成。
+看作是几块防护层：请求由外到内,handler是核：(filter->preHandle->handler->postHandle->afterCompletion);
+有pre未必有post,但，有pre就会有前几层的After,当前层异常时，有pre没有本层的after;
+
+23.源码interceptor：
+1.请求访问服务器时先到DispatcherServlet_applyPreHandle(){正序执行triggerAfterCompletion(){倒序afterCompletion()}};
+
+
+springSecurity：
+1、<security:form-login 
+	login-page="/login.html"
+	login-processing-url="/pages/login.do"/>
+page指定登陆页面，页面里会标明校验方法路径，和后面的url一致。
+processing-url指定安全框架生成校验方法的位置，和page页面的标明保持一致。
+
+
