@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.config.GmallCache;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.atguigu.gmall.product.service.SkuService;
@@ -131,6 +132,7 @@ public class SkuServiceImpl implements SkuService{
         return skuInfo.getPrice();
     }
 
+    @GmallCache
     @Override
     public SkuInfo getSkuInfoById(Long skuId) {
         SkuInfo skuInfoByIdFromDb = getSkuInfoByIdFromDb(skuId);
