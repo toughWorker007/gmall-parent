@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * @desc
@@ -21,6 +25,10 @@ import java.util.Map;
 public class ItemServiceImpl implements ItemService {
     @Autowired
     ProductFeignClient productFeignClient;
+
+    @Autowired
+    ThreadPoolExecutor threadPoolExecutor;
+
     @Override
     public Map<String, Object> getItem(Long skuId) {
 
@@ -30,12 +38,78 @@ public class ItemServiceImpl implements ItemService {
                 3.SpuSaleAttrList
                 4.CategoryView
          */
-        BigDecimal price = productFeignClient.getPrice(skuId);
-        SkuInfo skuInfo = productFeignClient.getSkuInfoById(skuId);
+        Map<String, Object> map = new HashMap<>();
+
+        //multiThread
+
+        CompletableFuture<SkuInfo> skuInfoCompletableFuture = CompletableFuture.supplyAsync(new Supplier<SkuInfo>() {
+            @Override
+            public SkuInfo get() {
+                SkuInfo skuInfo = productFeignClient.getSkuInfoById(skuId);
+                map.put("skuInfo",skuInfo);
+                return skuInfo;
+            }
+        },threadPoolExecutor);
+
+        CompletableFuture<Void> priceRunAsync = CompletableFuture.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                BigDecimal price = productFeignClient.getPrice(skuId);       //async
+                map.put("price", price);
+            }
+        });
+        CompletableFuture<Void> completableFutureSaleAttrs = skuInfoCompletableFuture.thenAcceptAsync(new Consumer<SkuInfo>() {
+            @Override
+            public void accept(SkuInfo skuInfo) {
+                List<SpuSaleAttr> spuSaleAttrs = productFeignClient.getSpuSaleAttrList(skuInfo.getSpuId(), skuId);
+                map.put("spuSaleAttrList", spuSaleAttrs);
+            }
+        },threadPoolExecutor);
+
+
+        CompletableFuture<Void> completableFutureCategory = skuInfoCompletableFuture.thenAcceptAsync(new Consumer<SkuInfo>() {
+            @Override
+            public void accept(SkuInfo skuInfo) {
+                BaseCategoryView baseCategoryView = productFeignClient.getCategoryView(skuInfo.getCategory3Id());
+                map.put("categoryView", baseCategoryView);
+            }
+        },threadPoolExecutor);
+
+
+        CompletableFuture<Void> completableFutureJsonMap = skuInfoCompletableFuture.thenAcceptAsync(new Consumer<SkuInfo>() {
+            @Override
+            public void accept(SkuInfo skuInfo) {
+                // 根据spuId查询出来的sku和销售属性值id的对应关系hash表
+                Map<String, Long> jsonMap = productFeignClient.getSaleAttrValuesBySpu(skuInfo.getSpuId());
+                String json = JSON.toJSONString(jsonMap);
+                //System.out.println(json);
+                map.put("valuesSkuJson", json);
+            }
+        },threadPoolExecutor);
+
+        CompletableFuture.allOf(skuInfoCompletableFuture,priceRunAsync,completableFutureSaleAttrs
+                ,completableFutureCategory,completableFutureJsonMap).join();
+
+
+        return map;
+
+        //singleThread
+        /**BigDecimal price = productFeignClient.getPrice(skuId);       //async
+         *
+         *
+        SkuInfo skuInfo = productFeignClient.getSkuInfoById(skuId);     //supply
+
         List<SpuSaleAttr> spuSaleAttrList = productFeignClient.getSpuSaleAttrList(skuInfo.getSpuId(),skuId);
+         //     accept
+
         BaseCategoryView categoryView = productFeignClient.getCategoryView(skuInfo.getCategory3Id());
+         //accept
+
         // 根据spuId查询出来的sku和销售属性值id的对应关系hash表
         Map<String,Long> jsonMap = productFeignClient.getSaleAttrValuesBySpu(skuInfo.getSpuId());
+         //accept
+
+
         HashMap<String, Object> map = new HashMap<>();
         map.put("price",price);
         map.put("skuInfo",skuInfo);
@@ -43,5 +117,6 @@ public class ItemServiceImpl implements ItemService {
         map.put("categoryView",categoryView);
         map.put("valuesSkuJson", JSON.toJSONString(jsonMap));
         return map;
+         */
     }
 }
