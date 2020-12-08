@@ -3,6 +3,8 @@ package com.atguigu.gmall.product.service.impl;
 import com.atguigu.gmall.model.product.BaseCategory1;
 import com.atguigu.gmall.model.product.BaseCategory2;
 import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.product.BaseCategoryView;
+import com.atguigu.gmall.product.mapper.BaseCategoryViewMapper;
 import com.atguigu.gmall.product.mapper.Category1Mapper;
 import com.atguigu.gmall.product.mapper.Category2Mapper;
 import com.atguigu.gmall.product.mapper.Category3Mapper;
@@ -24,6 +26,10 @@ public class CategoryServiceImpl implements CategoryService {
     private Category2Mapper category2Mapper;
     @Autowired
     private Category3Mapper category3Mapper;
+
+    @Autowired
+    BaseCategoryViewMapper baseCategoryViewMapper;
+
     @Override
     public List<BaseCategory1> getCategory1() {
         return category1Mapper.selectList(null);
@@ -34,6 +40,13 @@ public class CategoryServiceImpl implements CategoryService {
         QueryWrapper<BaseCategory3> wrapper = new QueryWrapper<>();
         wrapper.eq("category2_id",category2Id);
         return category3Mapper.selectList(wrapper);    }
+
+    @Override
+    public BaseCategoryView getCategoryView(Long category3Id) {
+        QueryWrapper<BaseCategoryView> wrapper = new QueryWrapper<>();
+        wrapper.eq("category3_id",category3Id);
+        return baseCategoryViewMapper.selectOne(wrapper);
+    }
 
     @Override
     public List<BaseCategory2> getCategory2(Long category1Id) {

@@ -12,6 +12,7 @@
         <module>web</module>
         <module>service-client</module>
         <module>model</module>
+        <module>service/service-item</module>
     </modules>
 
 

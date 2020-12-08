@@ -5,6 +5,7 @@ import com.atguigu.gmall.model.product.SpuImage;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -22,4 +23,8 @@ public interface SkuService {
     void cancelSale(Long skuId);
 
     void onSale(Long skuId);
+
+    BigDecimal getPrice(Long skuId);
+
+    SkuInfo getSkuInfoById(Long skuId);
 }

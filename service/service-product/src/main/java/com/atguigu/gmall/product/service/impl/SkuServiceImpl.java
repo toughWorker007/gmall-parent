@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -121,5 +122,29 @@ public class SkuServiceImpl implements SkuService{
         skuInfo.setId(skuId);
         skuInfoMapper.updateById(skuInfo);
         System.out.println("同步到搜索引擎");
+    }
+
+    @Override
+    public BigDecimal getPrice(Long skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+
+        return skuInfo.getPrice();
+    }
+
+    @Override
+    public SkuInfo getSkuInfoById(Long skuId) {
+        SkuInfo skuInfoByIdFromDb = getSkuInfoByIdFromDb(skuId);
+
+        return skuInfoByIdFromDb;
+    }
+
+    private SkuInfo getSkuInfoByIdFromDb(Long skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+
+        QueryWrapper<SkuImage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("sku_id", skuId);
+        List<SkuImage> skuImages = skuImageMapper.selectList(queryWrapper);
+        skuInfo.setSkuImageList(skuImages);
+        return skuInfo;
     }
 }
